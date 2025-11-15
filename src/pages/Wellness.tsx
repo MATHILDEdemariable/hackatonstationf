@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { Mic, ArrowLeft, TrendingUp } from "lucide-react";
+import { ArrowLeft, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
-import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { ElevenLabsWidget } from "@/components/ElevenLabsWidget";
 
 export default function Wellness() {
-  const [isRecording, setIsRecording] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
   const [isConversationActive, setIsConversationActive] = useState(false);
   const { t, i18n } = useTranslation();
@@ -30,26 +28,18 @@ export default function Wellness() {
     { icon: "🎯", label: t('wellness.quickActions.goals') },
   ];
 
-  const startRecording = () => {
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    setIsRecording(false);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-wellness pb-20">
       <div className="max-w-lg mx-auto">
-        {/* Header */}
-        <div className="bg-wellness/30 backdrop-blur-sm px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
+        {/* Header - Compact */}
+        <div className="bg-wellness/30 backdrop-blur-sm px-4 py-3">
+          <div className="flex items-center justify-between">
             <Link to="/">
               <Button variant="ghost" size="icon" className="text-wellness-foreground">
-                <ArrowLeft className="w-6 h-6" />
+                <ArrowLeft className="w-5 h-5" />
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold text-wellness-foreground">{t('wellness.title')}</h1>
+            <h1 className="text-xl font-bold text-wellness-foreground">{t('wellness.title')}</h1>
             <div className="w-10" />
           </div>
         </div>
@@ -153,50 +143,48 @@ export default function Wellness() {
               </div>
             </div>
           ) : (
-            // Active Session - Widget centré
-            <div className="space-y-6">
-              {/* Message d'intro du coach (compact) */}
-              <div className="flex gap-3 items-start">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+            // Active Session - Widget centré et dominant
+            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] space-y-6">
+              {/* Compact Coach Avatar and Status */}
+              <div className="text-center space-y-2">
+                <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full mx-auto flex items-center justify-center text-4xl">
                   🧠
                 </div>
-                <div className="bg-white/95 rounded-2xl rounded-tl-none p-3 max-w-[85%]">
-                  <p className="text-sm">
-                    {lang === 'fr' 
-                      ? "Salut ! Je suis là pour t'accompagner. Comment puis-je t'aider aujourd'hui ?"
-                      : "Hi! I'm here to support you. How can I help you today?"}
-                  </p>
-                </div>
+                <p className="text-white/80 text-sm font-medium">
+                  {lang === 'fr' ? 'Coach actif' : 'Coach active'}
+                </p>
               </div>
 
-              {/* Widget ElevenLabs - Conteneur blanc avec hauteur fixe */}
-              <div className="bg-white/95 rounded-3xl shadow-xl p-6 min-h-[500px] flex items-center justify-center">
-                <div className="w-full max-w-md">
-                  <ElevenLabsWidget
-                    agentId="agent_7901ka3n4540fbvsfav10f0e59yk"
-                    isActive={isConversationActive}
-                    onConversationStart={() => {
-                      console.log("Conversation started");
-                    }}
-                    onConversationEnd={() => {
-                      console.log("Conversation ended");
-                      setIsConversationActive(false);
-                    }}
-                  />
-                </div>
+              {/* ElevenLabs Widget - Centered, no background box */}
+              <div className="w-full max-w-md px-4">
+                <ElevenLabsWidget
+                  agentId="agent_7901ka3n4540fbvsfav10f0e59yk"
+                  isActive={isConversationActive}
+                  onConversationStart={() => {
+                    console.log("Conversation started");
+                    setIsConversationActive(true);
+                  }}
+                  onConversationEnd={() => {
+                    console.log("Conversation ended");
+                    setIsConversationActive(false);
+                  }}
+                />
               </div>
 
-              {/* Bouton Terminer */}
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSessionActive(false);
-                  setIsConversationActive(false);
-                }}
-                className="w-full"
-              >
-                {t('wellness.endSession')}
-              </Button>
+              {/* End Session Button */}
+              <div className="pt-8">
+                <Button
+                  onClick={() => {
+                    setSessionActive(false);
+                    setIsConversationActive(false);
+                  }}
+                  variant="outline"
+                  size="lg"
+                  className="border-white/30 text-white hover:bg-white/10 hover:text-white"
+                >
+                  {t('wellness.endSession')}
+                </Button>
+              </div>
             </div>
           )}
         </div>
