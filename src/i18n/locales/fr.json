@@ -114,5 +114,32 @@
   "common": {
     "years": "ans",
     "players": "joueurs"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Bienvenue !",
+      "subtitle": "Commençons par quelques infos sur toi"
+    },
+    "step2": {
+      "title": "Ton profil sportif",
+      "subtitle": "Parle-nous de ton expérience sur le terrain"
+    },
+    "step3": {
+      "title": "Tes statistiques",
+      "subtitle": "Partage tes performances"
+    },
+    "step4": {
+      "title": "Tes préférences",
+      "subtitle": "Aide-nous à trouver le club parfait"
+    },
+    "step5": {
+      "title": "Ton style de jeu",
+      "subtitle": "Décris tes forces et ta personnalité"
+    },
+    "navigation": {
+      "back": "Retour",
+      "continue": "Continuer",
+      "finish": "Créer mon profil"
+    }
   }
 }

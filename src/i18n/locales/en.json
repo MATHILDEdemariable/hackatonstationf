@@ -114,5 +114,32 @@
   "common": {
     "years": "years old",
     "players": "players"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Welcome!",
+      "subtitle": "Let's start with some info about you"
+    },
+    "step2": {
+      "title": "Your sport profile",
+      "subtitle": "Tell us about your experience on the field"
+    },
+    "step3": {
+      "title": "Your statistics",
+      "subtitle": "Share your performance"
+    },
+    "step4": {
+      "title": "Your preferences",
+      "subtitle": "Help us find the perfect club"
+    },
+    "step5": {
+      "title": "Your playing style",
+      "subtitle": "Describe your strengths and personality"
+    },
+    "navigation": {
+      "back": "Back",
+      "continue": "Continue",
+      "finish": "Create my profile"
+    }
   }
 }

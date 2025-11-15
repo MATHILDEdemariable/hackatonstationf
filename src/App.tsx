@@ -8,6 +8,7 @@ import Discover from "./pages/Discover";
 import Matches from "./pages/Matches";
 import Wellness from "./pages/Wellness";
 import Profile from "./pages/Profile";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/matches" element={<Matches />} />
           <Route path="/wellness" element={<Wellness />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
