@@ -1,16 +1,23 @@
 import { useState } from "react";
-import { Mic, ArrowLeft, TrendingUp } from "lucide-react";
+import { ArrowLeft, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
-import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { ElevenLabsWidget } from "@/components/ElevenLabsWidget";
+
+// Declare the custom element type for ElevenLabs
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'elevenlabs-convai': {
+        'agent-id': string;
+      };
+    }
+  }
+}
 
 export default function Wellness() {
-  const [isRecording, setIsRecording] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
-  const [isConversationActive, setIsConversationActive] = useState(false);
   const { t, i18n } = useTranslation();
   
   const lang = i18n.language as 'fr' | 'en';
@@ -30,21 +37,13 @@ export default function Wellness() {
     { icon: "🎯", label: t('wellness.quickActions.goals') },
   ];
 
-  const startRecording = () => {
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    setIsRecording(false);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-wellness pb-20">
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="bg-wellness/30 backdrop-blur-sm px-4 py-6">
           <div className="flex items-center justify-between mb-4">
-            <Link to="/">
+            <Link to="/app">
               <Button variant="ghost" size="icon" className="text-wellness-foreground">
                 <ArrowLeft className="w-6 h-6" />
               </Button>
@@ -77,10 +76,7 @@ export default function Wellness() {
                   {moodOptions.map((mood) => (
                     <button
                       key={mood.value}
-                      onClick={() => {
-                        setSessionActive(true);
-                        setIsConversationActive(true);
-                      }}
+                      onClick={() => setSessionActive(true)}
                       className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-wellness/10 transition-all hover-lift"
                     >
                       <span className="text-4xl">{mood.emoji}</span>
@@ -96,107 +92,62 @@ export default function Wellness() {
                     <div className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs">
-                    <span className="bg-white px-2 text-muted-foreground">{lang === 'fr' ? 'ou' : 'or'}</span>
+                    <span className="bg-white px-4 text-muted-foreground uppercase tracking-wider">
+                      {t('wellness.or')}
+                    </span>
                   </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="grid grid-cols-2 gap-3 mt-6">
-                  {quickActions.map((action) => (
+                <div className="grid grid-cols-2 gap-3">
+                  {quickActions.map((action, idx) => (
                     <button
-                      key={action.label}
-                      onClick={() => {
-                        setSessionActive(true);
-                        setIsConversationActive(true);
-                      }}
-                      className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-wellness/5 to-wellness/10 hover:from-wellness/10 hover:to-wellness/20 transition-all hover-lift"
+                      key={idx}
+                      onClick={() => setSessionActive(true)}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-wellness/5 to-wellness/10 hover:from-wellness/10 hover:to-wellness/20 transition-all border border-wellness/20 hover-lift"
                     >
-                      <span className="text-3xl">{action.icon}</span>
-                      <span className="text-sm font-medium text-left">{action.label}</span>
+                      <span className="text-2xl">{action.icon}</span>
+                      <span className="text-sm font-medium">{action.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Insights Preview */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  {t('wellness.insights.title')}
-                </h3>
-
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-white/90 rounded-2xl p-4 text-center">
-                    <div className="text-3xl mb-2">🔥</div>
-                    <div className="text-2xl font-bold text-wellness">12</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t('wellness.insights.streak')}
-                    </div>
+              <div className="bg-white/90 rounded-3xl p-6 shadow-lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-wellness/10 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-wellness" />
                   </div>
-
-                  <div className="bg-white/90 rounded-2xl p-4 text-center">
-                    <div className="text-3xl mb-2">😊</div>
-                    <div className="text-2xl font-bold text-success">{lang === 'fr' ? 'Bien' : 'Good'}</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t('wellness.insights.avgMood')}
-                    </div>
-                  </div>
-
-                  <div className="bg-white/90 rounded-2xl p-4 text-center">
-                    <div className="text-3xl mb-2">⏱️</div>
-                    <div className="text-2xl font-bold text-primary">24m</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {t('wellness.insights.avgTime')}
-                    </div>
-                  </div>
+                  <h3 className="font-bold text-lg">{t('wellness.weeklyInsights')}</h3>
+                </div>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <p>✨ {t('wellness.sessionCount')}</p>
+                  <p>📈 {t('wellness.moodImprovement')}</p>
+                  <p>🎯 {t('wellness.goalsAchieved')}</p>
                 </div>
               </div>
             </div>
           ) : (
-            // Active Session - Widget centré
-            <div className="min-h-[calc(100vh-200px)] flex flex-col">
-              {/* Message d'intro du coach (compact) */}
-              <div className="mb-6">
-                <div className="flex gap-3 items-start">
-                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+            <div className="space-y-6">
+              {/* Active Session */}
+              <div className="bg-white/95 rounded-3xl p-6 shadow-xl">
+                <div className="text-center mb-6">
+                  <div className="w-24 h-24 bg-wellness/10 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl animate-pulse">
                     🧠
                   </div>
-                  <div className="bg-white/95 rounded-2xl rounded-tl-none p-3 max-w-[85%]">
-                    <p className="text-sm">
-                      {lang === 'fr' 
-                        ? "Salut ! Je suis là pour t'accompagner. Comment puis-je t'aider aujourd'hui ?"
-                        : "Hi! I'm here to support you. How can I help you today?"}
-                    </p>
-                  </div>
+                  <h3 className="text-xl font-bold mb-2">{t('wellness.coachActive')}</h3>
+                  <p className="text-muted-foreground">{t('wellness.listening')}</p>
                 </div>
-              </div>
 
-              {/* Widget ElevenLabs - Centré et agrandi */}
-              <div className="flex-1 flex items-center justify-center">
-                <div className="w-full max-w-md">
-                  <ElevenLabsWidget
-                    agentId="agent_7901ka3n4540fbvsfav10f0e59yk"
-                    isActive={isConversationActive}
-                    onConversationStart={() => {
-                      console.log("Conversation started");
-                    }}
-                    onConversationEnd={() => {
-                      console.log("Conversation ended");
-                      setIsConversationActive(false);
-                    }}
-                  />
+                {/* ElevenLabs Widget */}
+                <div className="w-full flex items-center justify-center min-h-[400px]">
+                  <elevenlabs-convai agent-id="agent_7901ka3n4540fbvsfav10f0e59yk" />
                 </div>
-              </div>
 
-              {/* Bouton Terminer - Position fixe en bas */}
-              <div className="mt-6">
                 <Button
+                  onClick={() => setSessionActive(false)}
                   variant="outline"
-                  onClick={() => {
-                    setSessionActive(false);
-                    setIsConversationActive(false);
-                  }}
-                  className="w-full"
+                  className="w-full mt-6"
                 >
                   {t('wellness.endSession')}
                 </Button>
@@ -204,9 +155,9 @@ export default function Wellness() {
             </div>
           )}
         </div>
-      </div>
 
-      <BottomNav />
+        <BottomNav />
+      </div>
     </div>
   );
 }

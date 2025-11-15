@@ -9,9 +9,29 @@ import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import OfferCard from "@/components/chat/OfferCard";
 import CounterOfferModal from "@/components/chat/CounterOfferModal";
-import { ElevenLabsWidget } from "@/components/ElevenLabsWidget";
+// Declare the custom element type
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'elevenlabs-convai': {
+        'agent-id': string;
+      };
+    }
+  }
+}
 import { supabase } from "@/integrations/supabase/client";
 import { ClubProfile } from "@/types/database.types";
+
+// Declare the custom element type for ElevenLabs
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'elevenlabs-convai': {
+        'agent-id': string;
+      };
+    }
+  }
+}
 
 interface Message {
   id: string;
@@ -246,12 +266,9 @@ export default function Negotiations() {
       {/* Voice Call Widget */}
       {showVoiceCall && (
         <div className="h-96 border-b bg-card p-4">
-          <ElevenLabsWidget 
-            agentId="agent_6501ka3skkdwegqa1w8kbea3wh79"
-            isActive={showVoiceCall}
-            onConversationStart={() => console.log('Voice call started')}
-            onConversationEnd={() => setShowVoiceCall(false)}
-          />
+          <div className="w-full h-full flex items-center justify-center">
+            <elevenlabs-convai agent-id="agent_6501ka3skkdwegqa1w8kbea3wh79" />
+          </div>
         </div>
       )}
 
