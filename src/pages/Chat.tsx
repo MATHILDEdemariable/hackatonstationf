@@ -210,7 +210,6 @@ export default function Chat() {
                   {message.role === "assistant" ? (
                     <MarkdownMessage 
                       content={message.content}
-                      className={message.role === "user" ? "prose-invert" : ""}
                     />
                   ) : (
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>

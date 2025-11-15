@@ -9,21 +9,21 @@ interface MarkdownMessageProps {
 
 export function MarkdownMessage({ content, className }: MarkdownMessageProps) {
   return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      className={cn(
-        'prose prose-sm dark:prose-invert max-w-none',
-        'prose-headings:font-bold prose-headings:tracking-tight',
-        'prose-p:leading-relaxed prose-p:text-sm',
-        'prose-a:text-primary hover:prose-a:underline',
-        'prose-strong:font-semibold prose-strong:text-foreground',
-        'prose-code:text-xs prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none',
-        'prose-pre:bg-muted prose-pre:border prose-pre:border-border',
-        'prose-ul:my-2 prose-ol:my-2',
-        'prose-li:my-0.5',
-        className
-      )}
-      components={{
+    <div className={cn(
+      'prose prose-sm dark:prose-invert max-w-none',
+      'prose-headings:font-bold prose-headings:tracking-tight',
+      'prose-p:leading-relaxed prose-p:text-sm',
+      'prose-a:text-primary hover:prose-a:underline',
+      'prose-strong:font-semibold prose-strong:text-foreground',
+      'prose-code:text-xs prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none',
+      'prose-pre:bg-muted prose-pre:border prose-pre:border-border',
+      'prose-ul:my-2 prose-ol:my-2',
+      'prose-li:my-0.5',
+      className
+    )}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
         // Headings
         h1: ({ children }) => (
           <h1 className="text-base sm:text-lg font-bold mt-3 sm:mt-4 mb-2 first:mt-0">{children}</h1>
@@ -139,9 +139,10 @@ export function MarkdownMessage({ content, className }: MarkdownMessageProps) {
           </td>
         ),
       }}
-    >
-      {content}
-    </ReactMarkdown>
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 }
 
