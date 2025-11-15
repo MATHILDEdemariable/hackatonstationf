@@ -1,4 +1,4 @@
-import { Edit, MapPin, TrendingUp, Video } from "lucide-react";
+import { Edit, MapPin, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -9,37 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-const mockProfile = {
-  name: "Lucas Martin",
-  age: 24,
-  position: { fr: "Attaquant", en: "Striker" },
-  city: "Lyon",
-  level: { fr: "Semi-professionnel", en: "Semi-professional" },
-  avatar: "👤",
-  coverGradient: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)",
-  stats: {
-    goals: 23,
-    assists: 12,
-    matches: 38,
-    minutesPlayed: 2840,
-  },
-  bio: {
-    fr: "Attaquant rapide et technique, passionné de foot depuis l'enfance. À la recherche d'un nouveau challenge en National.",
-    en: "Fast and technical striker, passionate about football since childhood. Looking for a new challenge in National league."
-  },
-  achievements: [
-    { id: 1, title: { fr: "Meilleur buteur Régional 1", en: "Top scorer Regional 1" }, year: "2023" },
-    { id: 2, title: { fr: "Vainqueur Coupe Régionale", en: "Regional Cup Winner" }, year: "2022" },
-  ],
-  jerseyNumber: 9,
-  strongFoot: { fr: "Droit", en: "Right" },
-};
-
 export default function Profile() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const lang = i18n.language as 'fr' | 'en';
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -79,10 +52,7 @@ export default function Profile() {
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-lg mx-auto">
         {/* Cover & Avatar */}
-        <div 
-          className="h-48 relative"
-          style={{ background: mockProfile.coverGradient }}
-        >
+        <div className="h-48 relative bg-gradient-to-br from-primary to-primary/60">
           <Button
             variant="secondary"
             size="icon"
@@ -93,7 +63,7 @@ export default function Profile() {
 
           <div className="absolute -bottom-16 left-6">
             <div className="w-32 h-32 bg-card rounded-3xl flex items-center justify-center text-6xl shadow-xl border-4 border-background">
-              {mockProfile.avatar}
+              👤
             </div>
           </div>
         </div>
@@ -103,7 +73,7 @@ export default function Profile() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold mb-1">
-                {profile.full_name}, {profile.age} {t('common.years')}
+                {profile.full_name}, {profile.age} ans
               </h1>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className="bg-primary text-primary-foreground">
@@ -122,7 +92,7 @@ export default function Profile() {
 
           {/* Bio */}
           <p className="text-muted-foreground mb-6">
-            {profile.bio || t('profile.noBio')}
+            {profile.bio || "Aucune bio"}
           </p>
 
           {/* Tabs */}
@@ -193,23 +163,23 @@ export default function Profile() {
             <TabsContent value="info" className="space-y-4">
               <div className="bg-card rounded-2xl p-6 shadow-md space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.age')}</span>
-                  <span className="font-semibold">{profile.age} {t('common.years')}</span>
+                  <span className="text-muted-foreground">Âge</span>
+                  <span className="font-semibold">{profile.age} ans</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.city')}</span>
+                  <span className="text-muted-foreground">Ville</span>
                   <span className="font-semibold">{profile.city}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.position')}</span>
+                  <span className="text-muted-foreground">Position</span>
                   <span className="font-semibold">{profile.primary_position}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.level')}</span>
+                  <span className="text-muted-foreground">Niveau</span>
                   <span className="font-semibold">{profile.level}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.info.strongFoot')}</span>
+                  <span className="text-muted-foreground">Pied fort</span>
                   <span className="font-semibold">{profile.dominant_side}</span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -218,53 +188,16 @@ export default function Profile() {
                 </div>
               </div>
             </TabsContent>
-                  <span className="font-semibold">{mockProfile.age} {t('common.years')}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.location')}</span>
-                  <span className="font-semibold">{mockProfile.city}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.position')}</span>
-                  <span className="font-semibold">{mockProfile.position[lang]}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.level')}</span>
-                  <span className="font-semibold">{mockProfile.level[lang]}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.jersey')}</span>
-                  <span className="font-semibold">#{mockProfile.jerseyNumber}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{t('profile.foot')}</span>
-                  <span className="font-semibold">{mockProfile.strongFoot[lang]}</span>
-                </div>
-              </div>
-            </TabsContent>
 
             {/* Videos Tab */}
             <TabsContent value="videos" className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                {/* Add Video Card */}
-                <button className="aspect-video bg-card rounded-2xl shadow-md hover:shadow-lg transition-all hover-lift flex flex-col items-center justify-center gap-2">
-                  <Video className="w-8 h-8 text-muted-foreground" />
-                  <span className="text-sm font-medium">{t('profile.addVideo')}</span>
-                </button>
-
-                {/* Placeholder Video Cards */}
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="aspect-video bg-gradient-sport rounded-2xl shadow-md relative overflow-hidden cursor-pointer hover-lift"
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
-                        <div className="w-0 h-0 border-l-[10px] border-l-primary border-y-[7px] border-y-transparent ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="text-center py-12">
+                <Video className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Pas de vidéos</h3>
+                <p className="text-muted-foreground mb-6">
+                  Ajoutez des vidéos de vos highlights
+                </p>
+                <Button>Ajouter une vidéo</Button>
               </div>
             </TabsContent>
           </Tabs>
