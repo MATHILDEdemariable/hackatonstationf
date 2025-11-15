@@ -139,9 +139,15 @@ export default function Wellness() {
                   <p className="text-muted-foreground">{t('wellness.listening')}</p>
                 </div>
 
-                {/* ElevenLabs Widget - Centered and visible */}
-                <div className="w-full flex flex-col items-center justify-center py-8">
-                  <div className="w-full max-w-md">
+                {/* ElevenLabs Widget - Assistant vocal intégré */}
+                <div className="w-full flex flex-col items-center justify-center py-8 px-4">
+                  <div className="w-full bg-gradient-to-br from-wellness/10 to-wellness/5 rounded-2xl p-6 shadow-lg border border-wellness/20">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground mb-2">Assistant vocal</p>
+                        <div className="h-1 w-16 bg-wellness rounded-full mx-auto"></div>
+                      </div>
+                    </div>
                     <elevenlabs-convai agent-id="agent_7901ka3n4540fbvsfav10f0e59yk" />
                   </div>
                 </div>
