@@ -4,9 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PlayerProfile } from "@/types/matching.types";
-import { generatePlayerEmbedding } from "@/lib/embeddings";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 import { Step1PersonalInfo } from "@/components/onboarding/Step1PersonalInfo";
 import { Step2SportProfile } from "@/components/onboarding/Step2SportProfile";
@@ -27,7 +25,7 @@ export default function Onboarding() {
   // Créer un UUID valide pour la démo
   const [demoUserId] = useState(() => crypto.randomUUID());
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedSport, setSelectedSport] = useState<string>('football'); // Sport par défaut
+  const [selectedSport, setSelectedSport] = useState<string | null>(null); // Sera récupéré de la DB
   const [formData, setFormData] = useState<Partial<PlayerProfile['metadata']>>({
     stats: {
       goals: 0,
@@ -44,30 +42,26 @@ export default function Onboarding() {
   });
 
   const validateStep = (step: number, data: Partial<PlayerProfile['metadata']>): boolean => {
+    // Pour la démo, on rend toutes les étapes optionnelles
+    // On vérifie juste qu'au moins un champ principal est rempli
     switch (step) {
       case 1:
-        return !!(data.name && data.age && data.nationality && data.city);
+        return true; // Au moins le nom serait bien, mais pas obligatoire pour la démo
       case 2:
-        return !!(data.position && data.strongFoot && data.level && data.experienceYears);
+        return true; // Position, etc. optionnels
       case 3:
         return true; // Stats are optional
       case 4:
-        return !!(data.careerGoals?.desiredDivision && data.careerGoals?.salaryExpectation);
+        return true; // Préférences optionnelles
       case 5:
-        return !!(data.strengths && data.strengths.length > 0);
+        return true; // Strengths optionnels
       default:
-        return false;
+        return true;
     }
   };
 
   const handleNext = async () => {
-    const isValid = validateStep(currentStep, formData);
-    
-    if (!isValid) {
-      toast.error("Merci de remplir tous les champs requis");
-      return;
-    }
-
+    // Pour la démo, plus besoin de validation stricte
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -76,86 +70,55 @@ export default function Onboarding() {
   };
 
   const createPlayerProfile = async () => {
-    if (!selectedSport) {
-      toast.error("Veuillez sélectionner un sport");
-      return;
-    }
-
+    console.log('Creating profile (DEMO MODE - localStorage only)...', { formData, demoUserId });
+    
     toast.loading("Création de ton profil...");
     
     try {
-      // Generate embedding
-      const embedding = await generatePlayerEmbedding(formData);
+      // Prepare athlete profile data for localStorage (no database)
+      const profileData = {
+        id: demoUserId,
+        sport: 'Football',
+        full_name: formData.name || 'Joueur Démo',
+        birth_date: formData.birthDate || '2000-01-01',
+        age: formData.age || 24,
+        nationality: formData.nationality || 'FR',
+        city: formData.city || 'Paris',
+        primary_position: formData.position || 'Milieu',
+        secondary_positions: formData.secondaryPositions || [],
+        dominant_side: formData.strongFoot || 'Droit',
+        level: formData.level || 'Amateur',
+        experience_years: formData.experienceYears || 5,
+        stats: formData.stats || { goals: 0, assists: 0, matches: 0, minutesPlayed: 0, yellowCards: 0, redCards: 0 },
+        strengths: formData.strengths || ['Vitesse', 'Technique'],
+        playing_style: formData.playingStyle || ['Offensif'],
+        personality_traits: formData.personality || ['Motivé'],
+        career_preferences: formData.careerGoals || { desiredDivision: 'Régional', salaryExpectation: 'Amateur' },
+        created_at: new Date().toISOString(),
+      };
+
+      console.log('Profile data:', profileData);
       
-      // First, create profile entry
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: demoUserId,
-          email: `demo-${demoUserId}@example.com`,
-          user_type: 'athlete'
-        });
-
-      if (profileError && profileError.code !== '23505') { // Ignore duplicate key error
-        throw profileError;
-      }
+      // Store in localStorage for demo
+      localStorage.setItem('demoUserId', demoUserId);
+      localStorage.setItem('demoProfile', JSON.stringify(profileData));
+      console.log('Stored profile in localStorage');
       
-      // Save to athlete_profiles table with demo user ID
-      const { error: insertError } = await supabase
-        .from('athlete_profiles')
-        .insert({
-          id: demoUserId,
-          sport_id: selectedSport,
-          full_name: formData.name || '',
-          birth_date: formData.birthDate || new Date().toISOString(),
-          age: formData.age,
-          nationality: formData.nationality || '',
-          city: formData.city || '',
-          primary_position: formData.position || '',
-          secondary_positions: formData.secondaryPositions || [],
-          dominant_side: formData.strongFoot || '',
-          level: formData.level || '',
-          experience_years: formData.experienceYears || 0,
-          stats: formData.stats || {},
-          strengths: formData.strengths || [],
-          playing_style: formData.playingStyle || [],
-          personality_traits: formData.personality || [],
-          career_preferences: formData.careerGoals || {},
-          embedding_vector: embedding.join(','),
-        });
-
-      if (insertError) {
-        console.error('Error creating profile:', insertError);
-        // Continue même en cas d'erreur pour la démo
-      }
-
-      // Try to call match-with-clubs edge function (optional for demo)
-      try {
-        const { data: matchData, error: matchError } = await supabase.functions.invoke('match-with-clubs', {
-          body: { athlete_id: demoUserId }
-        });
-
-        if (matchError) {
-          console.error('Matching error:', matchError);
-        } else {
-          console.log('Matching results:', matchData);
-        }
-      } catch (matchError) {
-        console.error('Matching function error:', matchError);
-      }
+      // Simulate a small delay for UX
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       toast.dismiss();
-      toast.success("Profil créé avec succès !");
+      toast.success("Profil créé avec succès ! 🎉");
       
-      // Store demo user ID in localStorage for later use
-      localStorage.setItem('demoUserId', demoUserId);
-      
-      navigate('/discover');
+      // Navigate to discover page
+      setTimeout(() => {
+        navigate('/discover');
+      }, 500);
       
     } catch (error) {
       console.error('Error creating profile:', error);
       toast.dismiss();
-      toast.error("Erreur lors de la création du profil");
+      toast.error(`Erreur lors de la création du profil: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'elevenlabs-convai': {
+      'elevenlabs-convai': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         'agent-id': string;
       };
     }
@@ -148,7 +148,7 @@ export default function Wellness() {
                         <div className="h-1 w-16 bg-wellness rounded-full mx-auto"></div>
                       </div>
                     </div>
-                    <elevenlabs-convai agent-id="agent_7901ka3n4540fbvsfav10f0e59yk" />
+                    <elevenlabs-convai agent-id="agent_7901ka3n4540fbvsfav10f0e59yk"></elevenlabs-convai>
                   </div>
                 </div>
 

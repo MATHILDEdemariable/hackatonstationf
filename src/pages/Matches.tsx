@@ -8,7 +8,6 @@ import BottomNav from "@/components/BottomNav";
 import SuggestedClubs from "@/components/SuggestedClubs";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Match {
   id: string;
@@ -49,115 +48,89 @@ export default function Matches() {
   const [suggestedClubs, setSuggestedClubs] = useState<SuggestedClub[]>([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
-  // Récupérer l'ID utilisateur de démo depuis localStorage
-  const demoUserId = localStorage.getItem('demoUserId');
-
   useEffect(() => {
-    const loadMatches = async () => {
-      if (!demoUserId) {
-        setLoading(false);
-        return;
+    const loadMatches = () => {
+      // Load matches from localStorage for demo
+      const storedMatches = localStorage.getItem('demoMatches');
+      
+      if (storedMatches) {
+        try {
+          const parsedMatches = JSON.parse(storedMatches);
+          setMatches(parsedMatches);
+          console.log('Matches loaded from localStorage:', parsedMatches);
+        } catch (error) {
+          console.error('Error parsing matches:', error);
+        }
       }
-
-      try {
-        // Fetch matches with club details
-        const { data: matchesData, error: matchesError } = await supabase
-          .from('matches')
-          .select(`
-            id,
-            club_id,
-            status,
-            match_score,
-            club_profiles (
-              club_name,
-              logo_url
-            )
-          `)
-          .eq('athlete_id', demoUserId)
-          .order('created_at', { ascending: false });
-
-        if (matchesError) throw matchesError;
-
-        // For each match, get the last message and count unread messages
-        const matchesWithMessages = await Promise.all(
-          (matchesData || []).map(async (match) => {
-            // Get last message
-            const { data: lastMsg } = await supabase
-              .from('messages')
-              .select('content, created_at')
-              .eq('match_id', match.id)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-
-            // Count unread messages (simplified - in production, track read status)
-            const { count } = await supabase
-              .from('messages')
-              .select('*', { count: 'exact', head: true })
-              .eq('match_id', match.id)
-              .neq('sender_id', demoUserId);
-
-            const clubProfile = match.club_profiles as any;
-
-            return {
-              id: match.id,
-              club_id: match.club_id,
-              club_name: clubProfile?.club_name || 'Club',
-              logo_url: clubProfile?.logo_url || null,
-              status: match.status,
-              match_score: match.match_score,
-              lastMessage: lastMsg ? {
-                content: lastMsg.content || '',
-                timestamp: new Date(lastMsg.created_at).toLocaleDateString(lang)
-              } : undefined,
-              unreadCount: count || 0,
-            };
-          })
-        );
-
-        setMatches(matchesWithMessages);
-      } catch (error) {
-        console.error('Error loading matches:', error);
-      } finally {
-        setLoading(false);
-      }
+      
+      setLoading(false);
     };
 
     loadMatches();
     loadSuggestions();
-  }, [demoUserId, lang]);
+  }, [lang]);
 
-  const loadSuggestions = async () => {
-    if (!demoUserId) return;
+  const loadSuggestions = () => {
+    // Mock suggestions for demo
+    const mockSuggestions: SuggestedClub[] = [
+      {
+        id: 'club-1',
+        score: 0.92,
+        club_name: 'FC Toulouse',
+        city: 'Toulouse',
+        country: 'France',
+        division: 'National 2',
+        description: 'Club ambitieux cherchant des talents pour monter en National 1',
+        playing_style: 'Jeu de possession, pressing haut',
+        team_culture: 'Esprit familial et compétitif',
+        facilities: 'Terrain synthétique, salle de musculation',
+        recruitment_needs: 'Milieu offensif',
+        budget: '1500-2000€/mois',
+        logo_url: '🏟️'
+      },
+      {
+        id: 'club-2',
+        score: 0.88,
+        club_name: 'AS Lyon Nord',
+        city: 'Lyon',
+        country: 'France',
+        division: 'Régional 1',
+        description: 'Club en pleine croissance avec de belles perspectives',
+        playing_style: 'Jeu direct et rapide',
+        team_culture: 'Jeune et dynamique',
+        facilities: 'Terrain naturel, vestiaires modernes',
+        recruitment_needs: 'Milieu de terrain',
+        budget: '800-1200€/mois',
+        logo_url: '⚽'
+      },
+      {
+        id: 'club-3',
+        score: 0.85,
+        club_name: 'Bordeaux SC',
+        city: 'Bordeaux',
+        country: 'France',
+        division: 'National 3',
+        description: 'Formation de qualité et encadrement professionnel',
+        playing_style: 'Jeu technique et collectif',
+        team_culture: 'Accent sur le développement',
+        facilities: 'Centre d\'entraînement complet',
+        recruitment_needs: 'Milieu polyvalent',
+        budget: '1000-1500€/mois',
+        logo_url: '🎯'
+      }
+    ];
     
-    setLoadingSuggestions(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('search-clubs-qdrant', {
-        body: { 
-          athlete_id: demoUserId,
-          limit: 5
-        }
-      });
-
-      if (error) {
-        console.error('Error loading club suggestions:', error);
-        return;
-      }
-
-      if (data?.success && data.clubs) {
-        setSuggestedClubs(data.clubs);
-        console.log('Loaded club suggestions:', data.clubs.length);
-      }
-    } catch (error) {
-      console.error('Error calling Qdrant function:', error);
-    } finally {
-      setLoadingSuggestions(false);
-    }
+    setSuggestedClubs(mockSuggestions);
+    setLoadingSuggestions(false);
   };
 
   const filteredMatches = matches.filter(match => 
     match.club_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Séparer les clubs likés (pending) des autres matches
+  const likedClubs = filteredMatches.filter(m => m.status === 'pending');
+  const activeMatches = filteredMatches.filter(m => m.status !== 'pending');
 
   if (loading) {
     return (
@@ -197,6 +170,58 @@ export default function Matches() {
           />
         </div>
 
+        {/* Liked Clubs Section */}
+        {likedClubs.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
+              ❤️ {lang === 'fr' ? 'Clubs likés' : 'Liked clubs'} ({likedClubs.length})
+            </h2>
+            <div className="space-y-3">
+              {likedClubs.map((match) => (
+                <div
+                  key={match.id}
+                  className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/20 dark:to-pink-950/20 rounded-2xl p-4 shadow-md hover:shadow-lg transition-all border border-red-200 dark:border-red-800"
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Avatar */}
+                    <div className="w-14 h-14 bg-gradient-sport rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 shadow-sm">
+                      {match.logo_url || '🏆'}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold truncate">{match.club_name}</h3>
+                        <Badge 
+                          variant="default" 
+                          className="bg-red-500 text-white px-2 py-0.5 text-xs"
+                        >
+                          ❤️ {lang === 'fr' ? 'Liké' : 'Liked'}
+                        </Badge>
+                        {match.match_score && (
+                          <Badge variant="outline" className="text-xs">
+                            {Math.round(match.match_score * 100)}% match
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {lang === 'fr' ? 'En attente de réponse du club' : 'Waiting for club response'}
+                      </p>
+                    </div>
+
+                    {/* Action Button */}
+                    <Link to={`/app/negotiations/${match.club_id}`}>
+                      <Button size="sm" variant="outline" className="border-red-300 hover:bg-red-50">
+                        {lang === 'fr' ? 'Voir' : 'View'}
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Suggested Clubs from Qdrant */}
         {suggestedClubs.length > 0 && (
           <div className="mb-6">
@@ -207,27 +232,35 @@ export default function Matches() {
                 // TODO: Navigate to a full page of suggestions or expand inline
                 console.log('Show more suggestions');
               }}
+              onLike={(clubId) => {
+                // Reload matches when a club is liked
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              }}
             />
           </div>
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="all" className="mb-6">
-          <TabsList className="w-full">
-            <TabsTrigger value="all" className="flex-1">
-              {lang === 'fr' ? 'Tous' : 'All'} ({matches.length})
-            </TabsTrigger>
-            <TabsTrigger value="active" className="flex-1">
-              {lang === 'fr' ? 'Actifs' : 'Active'} ({matches.filter(m => m.status === 'active').length})
-            </TabsTrigger>
-            <TabsTrigger value="archived" className="flex-1">
-              {lang === 'fr' ? 'Archivés' : 'Archived'} ({matches.filter(m => m.status === 'archived').length})
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {activeMatches.length > 0 && (
+          <Tabs defaultValue="all" className="mb-6">
+            <TabsList className="w-full">
+              <TabsTrigger value="all" className="flex-1">
+                {lang === 'fr' ? 'Conversations' : 'Conversations'} ({activeMatches.length})
+              </TabsTrigger>
+              <TabsTrigger value="active" className="flex-1">
+                {lang === 'fr' ? 'Actifs' : 'Active'} ({activeMatches.filter(m => m.status === 'active').length})
+              </TabsTrigger>
+              <TabsTrigger value="archived" className="flex-1">
+                {lang === 'fr' ? 'Archivés' : 'Archived'} ({activeMatches.filter(m => m.status === 'archived').length})
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
 
-        {/* Matches List */}
-        {filteredMatches.length === 0 ? (
+        {/* Active Matches List */}
+        {activeMatches.length === 0 && likedClubs.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">💬</div>
             <h3 className="text-xl font-bold mb-2">
@@ -239,9 +272,9 @@ export default function Matches() {
                 : 'Complete your profile to receive club offers'}
             </p>
           </div>
-        ) : (
+        ) : activeMatches.length > 0 ? (
           <div className="space-y-3">
-            {filteredMatches.map((match) => (
+            {activeMatches.map((match) => (
               <div
                 key={match.id}
                 className="bg-card rounded-2xl p-4 shadow-md hover:shadow-lg transition-all"
@@ -294,7 +327,7 @@ export default function Matches() {
               </div>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       <BottomNav />

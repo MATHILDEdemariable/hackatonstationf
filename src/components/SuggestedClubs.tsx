@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface Club {
   id: string;
@@ -23,14 +25,65 @@ interface SuggestedClubsProps {
   clubs: Club[];
   maxDisplay?: number;
   onViewMore?: () => void;
+  onLike?: (clubId: string) => void;
 }
 
-export default function SuggestedClubs({ clubs, maxDisplay = 3, onViewMore }: SuggestedClubsProps) {
+export default function SuggestedClubs({ clubs, maxDisplay = 3, onViewMore, onLike }: SuggestedClubsProps) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as 'fr' | 'en';
+  const [likedClubs, setLikedClubs] = useState<Set<string>>(new Set());
+  const [likingClub, setLikingClub] = useState<string | null>(null);
   
   const displayedClubs = clubs.slice(0, maxDisplay);
   const hasMore = clubs.length > maxDisplay;
+
+  const handleLike = async (club: Club) => {
+    const demoUserId = localStorage.getItem('demoUserId');
+    
+    if (!demoUserId) {
+      toast.error(lang === 'fr' ? 'Veuillez créer un profil d\'abord' : 'Please create a profile first');
+      return;
+    }
+
+    if (likedClubs.has(club.id)) {
+      toast.info(lang === 'fr' ? 'Club déjà liké' : 'Club already liked');
+      return;
+    }
+
+    setLikingClub(club.id);
+
+    try {
+      // Save to localStorage instead of database
+      const storedMatches = localStorage.getItem('demoMatches');
+      const matches = storedMatches ? JSON.parse(storedMatches) : [];
+      
+      const newMatch = {
+        id: `match-${Date.now()}`,
+        club_id: club.id,
+        club_name: club.club_name,
+        logo_url: club.logo_url,
+        status: 'pending',
+        match_score: club.score,
+        unreadCount: 0
+      };
+      
+      matches.push(newMatch);
+      localStorage.setItem('demoMatches', JSON.stringify(matches));
+      console.log('Saved liked club to localStorage:', newMatch);
+
+      setLikedClubs(prev => new Set(prev).add(club.id));
+      toast.success(lang === 'fr' ? `${club.club_name} ajouté à vos matchs !` : `${club.club_name} added to your matches!`);
+      
+      if (onLike) {
+        onLike(club.id);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(lang === 'fr' ? 'Erreur lors du like' : 'Error liking club');
+    } finally {
+      setLikingClub(null);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -90,9 +143,17 @@ export default function SuggestedClubs({ clubs, maxDisplay = 3, onViewMore }: Su
               {/* Action */}
               <Button 
                 size="icon" 
-                className="bg-gradient-sport text-white hover:shadow-lg transition-all flex-shrink-0"
+                onClick={() => handleLike(club)}
+                disabled={likingClub === club.id || likedClubs.has(club.id)}
+                className={`${
+                  likedClubs.has(club.id)
+                    ? 'bg-red-500 text-white'
+                    : 'bg-gradient-sport text-white hover:shadow-lg'
+                } transition-all flex-shrink-0`}
               >
-                <Heart className="w-4 h-4" />
+                <Heart 
+                  className={`w-4 h-4 ${likedClubs.has(club.id) ? 'fill-current' : ''}`}
+                />
               </Button>
             </div>
           </div>
