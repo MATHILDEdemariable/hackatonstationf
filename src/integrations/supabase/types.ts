@@ -191,6 +191,95 @@ export type Database = {
           },
         ]
       }
+      matches: {
+        Row: {
+          athlete_id: string
+          club_id: string
+          created_at: string | null
+          id: string
+          match_reasoning: Json | null
+          match_score: number | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          athlete_id: string
+          club_id: string
+          created_at?: string | null
+          id?: string
+          match_reasoning?: Json | null
+          match_score?: number | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          athlete_id?: string
+          club_id?: string
+          created_at?: string | null
+          id?: string
+          match_reasoning?: Json | null
+          match_score?: number | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_athlete_id_fkey"
+            columns: ["athlete_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "club_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          match_id: string
+          message_type: string
+          offer_data: Json | null
+          sender_id: string
+          sender_type: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          match_id: string
+          message_type?: string
+          offer_data?: Json | null
+          sender_id: string
+          sender_type: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          match_id?: string
+          message_type?: string
+          offer_data?: Json | null
+          sender_id?: string
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null

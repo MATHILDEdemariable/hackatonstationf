@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.text-to-dialogue]
 verify_jwt = true
+
+[functions.generate-embeddings]
+verify_jwt = false

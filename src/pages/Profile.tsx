@@ -27,13 +27,21 @@ export default function Profile() {
         .from('athlete_profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error loading profile:', error);
-      } else {
-        setProfile(data);
+        setLoading(false);
+        return;
       }
+
+      if (!data) {
+        // No profile found, redirect to onboarding
+        navigate('/app/onboarding');
+        return;
+      }
+
+      setProfile(data);
       setLoading(false);
     };
 
@@ -41,11 +49,18 @@ export default function Profile() {
   }, [user, navigate]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement du profil...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!profile) {
-    return <div className="min-h-screen flex items-center justify-center">Profil non trouvé</div>;
+    return null; // Will redirect in useEffect
   }
 
   return (
