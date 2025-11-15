@@ -1,0 +1,118 @@
+{
+  "home": {
+    "title": "Match&Play",
+    "subtitle": "Tinder du Sport 2.0",
+    "description": "Trouve ton club idéal + Coach wellness IA",
+    "stats": {
+      "clubs": "Clubs actifs",
+      "matches": "Matchs réalisés",
+      "satisfaction": "Satisfaction"
+    },
+    "features": {
+      "discover": {
+        "title": "Découvrir des clubs",
+        "description": "Swipe les profils de clubs qui recrutent dans ta région"
+      },
+      "matches": {
+        "title": "Tes matchs",
+        "description": "Discute avec les clubs intéressés et négocie ton contrat"
+      },
+      "wellness": {
+        "title": "Coach Wellness",
+        "description": "Ton coach mental vocal IA pour booster ta performance"
+      }
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "description": "Commence à swiper et trouve ton club idéal",
+      "button": "Découvrir maintenant"
+    }
+  },
+  "discover": {
+    "title": "Découvrir",
+    "noMore": "Plus de clubs disponibles",
+    "noMoreDescription": "Reviens demain pour découvrir de nouveaux clubs !",
+    "backButton": "Retour",
+    "division": "Division",
+    "budget": "Budget",
+    "squad": "Effectif",
+    "recruiting": "On recherche",
+    "facilities": "Nos installations"
+  },
+  "matches": {
+    "title": "Mes Matchs",
+    "newMatch": "Nouveau match !",
+    "interested": "est aussi intéressé !",
+    "startChat": "Commencer à discuter",
+    "continueSwiping": "Continuer à swiper",
+    "noMatches": "Aucun match pour l'instant",
+    "noMatchesDescription": "Continue à swiper pour trouver ton club idéal",
+    "goDiscover": "Découvrir des clubs"
+  },
+  "wellness": {
+    "title": "Coach Wellness",
+    "welcome": "Bonjour",
+    "howFeeling": "Comment te sens-tu aujourd'hui ?",
+    "moods": {
+      "great": "Super",
+      "good": "Bien",
+      "okay": "Correct",
+      "bad": "Pas top",
+      "terrible": "Difficile"
+    },
+    "quickActions": {
+      "meditation": "Méditation",
+      "motivation": "Motivation",
+      "stress": "Anti-stress",
+      "goals": "Objectifs"
+    },
+    "processing": "Le coach réfléchit...",
+    "holdToTalk": "Maintiens appuyé pour parler",
+    "releaseToSend": "Relâche pour envoyer",
+    "orType": "ou écris ton message...",
+    "endSession": "Terminer",
+    "insights": {
+      "title": "Tes insights",
+      "streak": "jours consécutifs",
+      "avgMood": "Humeur moyenne",
+      "avgTime": "temps moyen/session"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "tabs": {
+      "about": "À propos",
+      "stats": "Statistiques",
+      "videos": "Vidéos"
+    },
+    "info": "Informations",
+    "age": "Âge",
+    "location": "Localisation",
+    "position": "Position",
+    "level": "Niveau",
+    "jersey": "Numéro",
+    "foot": "Pied fort",
+    "bio": "Bio",
+    "noBio": "Aucune bio pour le moment",
+    "achievements": "Palmarès",
+    "stats": {
+      "goals": "Buts marqués",
+      "assists": "Passes décisives",
+      "matches": "Matchs joués",
+      "minutes": "Minutes jouées"
+    },
+    "performance": "Performance sur la saison",
+    "addVideo": "Ajouter une vidéo"
+  },
+  "nav": {
+    "home": "Accueil",
+    "discover": "Découvrir",
+    "matches": "Matchs",
+    "wellness": "Wellness",
+    "profile": "Profil"
+  },
+  "common": {
+    "years": "ans",
+    "players": "joueurs"
+  }
+}

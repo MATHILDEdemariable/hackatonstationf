@@ -1,0 +1,118 @@
+{
+  "home": {
+    "title": "Match&Play",
+    "subtitle": "Tinder for Sports 2.0",
+    "description": "Find your ideal club + AI Wellness Coach",
+    "stats": {
+      "clubs": "Active clubs",
+      "matches": "Matches made",
+      "satisfaction": "Satisfaction"
+    },
+    "features": {
+      "discover": {
+        "title": "Discover clubs",
+        "description": "Swipe through club profiles recruiting in your area"
+      },
+      "matches": {
+        "title": "Your matches",
+        "description": "Chat with interested clubs and negotiate your contract"
+      },
+      "wellness": {
+        "title": "Wellness Coach",
+        "description": "Your AI voice mental coach to boost your performance"
+      }
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "description": "Start swiping and find your ideal club",
+      "button": "Discover now"
+    }
+  },
+  "discover": {
+    "title": "Discover",
+    "noMore": "No more clubs available",
+    "noMoreDescription": "Come back tomorrow to discover new clubs!",
+    "backButton": "Back",
+    "division": "Division",
+    "budget": "Budget",
+    "squad": "Squad",
+    "recruiting": "We're looking for",
+    "facilities": "Our facilities"
+  },
+  "matches": {
+    "title": "My Matches",
+    "newMatch": "New match!",
+    "interested": "is also interested!",
+    "startChat": "Start chatting",
+    "continueSwiping": "Continue swiping",
+    "noMatches": "No matches yet",
+    "noMatchesDescription": "Keep swiping to find your ideal club",
+    "goDiscover": "Discover clubs"
+  },
+  "wellness": {
+    "title": "Wellness Coach",
+    "welcome": "Hello",
+    "howFeeling": "How are you feeling today?",
+    "moods": {
+      "great": "Great",
+      "good": "Good",
+      "okay": "Okay",
+      "bad": "Not great",
+      "terrible": "Difficult"
+    },
+    "quickActions": {
+      "meditation": "Meditation",
+      "motivation": "Motivation",
+      "stress": "Stress relief",
+      "goals": "Goals"
+    },
+    "processing": "Coach is thinking...",
+    "holdToTalk": "Hold to talk",
+    "releaseToSend": "Release to send",
+    "orType": "or type your message...",
+    "endSession": "End session",
+    "insights": {
+      "title": "Your insights",
+      "streak": "day streak",
+      "avgMood": "Average mood",
+      "avgTime": "avg time/session"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "tabs": {
+      "about": "About",
+      "stats": "Statistics",
+      "videos": "Videos"
+    },
+    "info": "Information",
+    "age": "Age",
+    "location": "Location",
+    "position": "Position",
+    "level": "Level",
+    "jersey": "Jersey",
+    "foot": "Strong foot",
+    "bio": "Bio",
+    "noBio": "No bio yet",
+    "achievements": "Achievements",
+    "stats": {
+      "goals": "Goals scored",
+      "assists": "Assists",
+      "matches": "Matches played",
+      "minutes": "Minutes played"
+    },
+    "performance": "Season performance",
+    "addVideo": "Add video"
+  },
+  "nav": {
+    "home": "Home",
+    "discover": "Discover",
+    "matches": "Matches",
+    "wellness": "Wellness",
+    "profile": "Profile"
+  },
+  "common": {
+    "years": "years old",
+    "players": "players"
+  }
+}

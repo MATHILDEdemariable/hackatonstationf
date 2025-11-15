@@ -4,25 +4,29 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { cn } from "@/lib/utils";
-
-const moodOptions = [
-  { emoji: "😊", label: "Super bien", value: "great" },
-  { emoji: "🙂", label: "Bien", value: "good" },
-  { emoji: "😐", label: "Neutre", value: "neutral" },
-  { emoji: "😟", label: "Pas top", value: "bad" },
-  { emoji: "😰", label: "Stressé", value: "stressed" },
-];
-
-const quickActions = [
-  { icon: "🧘", label: "Méditation guidée" },
-  { icon: "💪", label: "Boost motivation" },
-  { icon: "😰", label: "Gérer le stress" },
-  { icon: "🎯", label: "Fixer des objectifs" },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Wellness() {
   const [isRecording, setIsRecording] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
+  const { t, i18n } = useTranslation();
+  
+  const lang = i18n.language as 'fr' | 'en';
+
+  const moodOptions = [
+    { emoji: "😊", label: t('wellness.moods.great'), value: "great" },
+    { emoji: "🙂", label: t('wellness.moods.good'), value: "good" },
+    { emoji: "😐", label: t('wellness.moods.okay'), value: "neutral" },
+    { emoji: "😟", label: t('wellness.moods.bad'), value: "bad" },
+    { emoji: "😰", label: t('wellness.moods.terrible'), value: "stressed" },
+  ];
+
+  const quickActions = [
+    { icon: "🧘", label: t('wellness.quickActions.meditation') },
+    { icon: "💪", label: t('wellness.quickActions.motivation') },
+    { icon: "😰", label: t('wellness.quickActions.stress') },
+    { icon: "🎯", label: t('wellness.quickActions.goals') },
+  ];
 
   const startRecording = () => {
     setIsRecording(true);
@@ -43,7 +47,7 @@ export default function Wellness() {
                 <ArrowLeft className="w-6 h-6" />
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold text-wellness-foreground">Coach Wellness</h1>
+            <h1 className="text-2xl font-bold text-wellness-foreground">{t('wellness.title')}</h1>
             <div className="w-10" />
           </div>
         </div>
@@ -58,10 +62,10 @@ export default function Wellness() {
                   🧠
                 </div>
                 <h2 className="text-2xl font-bold mb-2 text-white">
-                  Bonjour Champion 👋
+                  {t('wellness.welcome')} {lang === 'fr' ? 'Champion' : 'Champion'} 👋
                 </h2>
                 <p className="text-wellness-light text-lg">
-                  Comment te sens-tu aujourd'hui ?
+                  {t('wellness.howFeeling')}
                 </p>
               </div>
 
@@ -87,7 +91,7 @@ export default function Wellness() {
                     <div className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs">
-                    <span className="bg-white px-2 text-muted-foreground">ou</span>
+                    <span className="bg-white px-2 text-muted-foreground">{lang === 'fr' ? 'ou' : 'or'}</span>
                   </div>
                 </div>
 
@@ -97,113 +101,127 @@ export default function Wellness() {
                     <button
                       key={action.label}
                       onClick={() => setSessionActive(true)}
-                      className="bg-gradient-to-br from-wellness/10 to-wellness/5 rounded-2xl p-4 text-center hover:from-wellness/20 hover:to-wellness/10 transition-all hover-lift"
+                      className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-wellness/5 to-wellness/10 hover:from-wellness/10 hover:to-wellness/20 transition-all hover-lift"
                     >
-                      <div className="text-3xl mb-2">{action.icon}</div>
-                      <div className="text-sm font-medium">{action.label}</div>
+                      <span className="text-3xl">{action.icon}</span>
+                      <span className="text-sm font-medium text-left">{action.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Insights */}
-              <div className="bg-white/95 rounded-3xl p-6 shadow-xl">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="w-5 h-5 text-wellness" />
-                  <h3 className="font-bold">Tes insights</h3>
-                </div>
-                
+              {/* Insights Preview */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" />
+                  {t('wellness.insights.title')}
+                </h3>
+
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="text-center p-3 bg-muted rounded-xl">
-                    <div className="text-2xl mb-1">🔥</div>
-                    <div className="text-xl font-bold">12</div>
-                    <div className="text-xs text-muted-foreground">jours consécutifs</div>
+                  <div className="bg-white/90 rounded-2xl p-4 text-center">
+                    <div className="text-3xl mb-2">🔥</div>
+                    <div className="text-2xl font-bold text-wellness">12</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t('wellness.insights.streak')}
+                    </div>
                   </div>
-                  <div className="text-center p-3 bg-muted rounded-xl">
-                    <div className="text-2xl mb-1">😊</div>
-                    <div className="text-xl font-bold">Bonne</div>
-                    <div className="text-xs text-muted-foreground">humeur moy.</div>
+
+                  <div className="bg-white/90 rounded-2xl p-4 text-center">
+                    <div className="text-3xl mb-2">😊</div>
+                    <div className="text-2xl font-bold text-success">{lang === 'fr' ? 'Bien' : 'Good'}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t('wellness.insights.avgMood')}
+                    </div>
                   </div>
-                  <div className="text-center p-3 bg-muted rounded-xl">
-                    <div className="text-2xl mb-1">⏱️</div>
-                    <div className="text-xl font-bold">24m</div>
-                    <div className="text-xs text-muted-foreground">temps/session</div>
+
+                  <div className="bg-white/90 rounded-2xl p-4 text-center">
+                    <div className="text-3xl mb-2">⏱️</div>
+                    <div className="text-2xl font-bold text-primary">24m</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t('wellness.insights.avgTime')}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
+            // Active Session
             <div className="space-y-6">
-              {/* Active Session */}
-              <div className="bg-white/95 rounded-3xl p-6 shadow-xl min-h-[400px]">
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-wellness/10 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">
+              {/* Mock Conversation */}
+              <div className="space-y-4 mb-8">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl flex-shrink-0">
                     🧠
                   </div>
-                  <p className="text-sm text-muted-foreground italic">
-                    "Je suis là pour t'accompagner. Parle-moi de ce qui te préoccupe..."
-                  </p>
-                </div>
-
-                {/* Conversation would go here */}
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-2xl p-4 max-w-[80%]">
+                  <div className="bg-white/95 rounded-2xl rounded-tl-none p-4 max-w-[80%]">
                     <p className="text-sm">
-                      Bonjour ! Comment puis-je t'aider aujourd'hui ?
+                      {lang === 'fr' 
+                        ? "Je suis là pour t'accompagner. Comment puis-je t'aider aujourd'hui ?"
+                        : "I'm here to support you. How can I help you today?"}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Voice Input */}
-              <div className="bg-white/95 rounded-3xl p-6 shadow-xl">
-                {isRecording && (
-                  <div className="mb-6 text-center">
-                    <div className="flex items-center justify-center gap-1 mb-2">
-                      <div className="w-1 h-8 bg-wellness rounded-full animate-pulse" />
-                      <div className="w-1 h-12 bg-wellness rounded-full animate-pulse delay-75" />
-                      <div className="w-1 h-10 bg-wellness rounded-full animate-pulse delay-150" />
-                      <div className="w-1 h-14 bg-wellness rounded-full animate-pulse" />
-                      <div className="w-1 h-8 bg-wellness rounded-full animate-pulse delay-75" />
+              {/* Voice Input Area */}
+              <div className="bg-white/95 rounded-3xl p-6 text-center">
+                <div className="mb-6">
+                  {/* Waveform Visualization (Mock) */}
+                  {isRecording && (
+                    <div className="flex items-center justify-center gap-1 h-20 mb-4">
+                      {[...Array(20)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-1 bg-wellness rounded-full animate-pulse"
+                          style={{
+                            height: `${Math.random() * 60 + 20}px`,
+                            animationDelay: `${i * 0.05}s`,
+                          }}
+                        />
+                      ))}
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      En écoute...
-                    </p>
-                  </div>
-                )}
+                  )}
 
-                <div className="flex flex-col items-center gap-4">
+                  {/* Voice Button */}
                   <button
                     onMouseDown={startRecording}
                     onMouseUp={stopRecording}
                     onTouchStart={startRecording}
                     onTouchEnd={stopRecording}
                     className={cn(
-                      "w-20 h-20 rounded-full transition-all flex items-center justify-center shadow-lg",
-                      isRecording 
-                        ? "bg-destructive animate-pulse-ring scale-110" 
-                        : "bg-wellness hover:bg-wellness/90 hover:scale-105"
+                      "w-20 h-20 rounded-full mx-auto flex items-center justify-center transition-all shadow-lg",
+                      isRecording
+                        ? "bg-destructive scale-110 animate-pulse"
+                        : "bg-wellness hover:scale-105"
                     )}
                   >
-                    <Mic className="w-8 h-8 text-white" />
+                    <Mic className={cn(
+                      "w-8 h-8 text-white",
+                      isRecording && "animate-pulse"
+                    )} />
                   </button>
 
-                  <p className="text-sm text-center text-muted-foreground">
-                    {isRecording 
-                      ? "Relâche pour envoyer" 
-                      : "Maintiens appuyé pour parler"
-                    }
+                  <p className="text-sm text-muted-foreground mt-4">
+                    {isRecording ? t('wellness.releaseToSend') : t('wellness.holdToTalk')}
                   </p>
-
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setSessionActive(false)}
-                    className="text-muted-foreground"
-                  >
-                    Terminer la session
-                  </Button>
                 </div>
+
+                <div className="relative py-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-white px-2 text-muted-foreground">{t('wellness.orType')}</span>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setSessionActive(false)}
+                  className="w-full"
+                >
+                  {t('wellness.endSession')}
+                </Button>
               </div>
             </div>
           )}

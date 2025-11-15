@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import BottomNav from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 // Mock data
 const mockClubs = [
@@ -15,10 +16,13 @@ const mockClubs = [
     matchScore: 92,
     logo: "🏟️",
     banner: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)",
-    recruitmentNeeds: ["Attaquant", "Milieu offensif"],
+    recruitmentNeeds: { fr: ["Attaquant", "Milieu offensif"], en: ["Striker", "Offensive midfielder"] },
     budget: { min: 1200, max: 1800 },
     squadSize: 22,
-    facilities: ["Terrain synthétique", "Salle de musculation", "Kinésithérapeute"],
+    facilities: { 
+      fr: ["Terrain synthétique", "Salle de musculation", "Kinésithérapeute"],
+      en: ["Synthetic field", "Gym", "Physiotherapist"]
+    },
   },
   {
     id: 2,
@@ -28,10 +32,13 @@ const mockClubs = [
     matchScore: 85,
     logo: "⚽",
     banner: "linear-gradient(135deg, #dc2626 0%, #f97316 100%)",
-    recruitmentNeeds: ["Défenseur central", "Milieu défensif"],
+    recruitmentNeeds: { fr: ["Défenseur central", "Milieu défensif"], en: ["Center back", "Defensive midfielder"] },
     budget: { min: 800, max: 1200 },
     squadSize: 19,
-    facilities: ["Terrain naturel", "Vestiaires", "Local médical"],
+    facilities: { 
+      fr: ["Terrain naturel", "Vestiaires", "Local médical"],
+      en: ["Natural field", "Locker rooms", "Medical room"]
+    },
   },
   {
     id: 3,
@@ -41,10 +48,13 @@ const mockClubs = [
     matchScore: 88,
     logo: "🎯",
     banner: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
-    recruitmentNeeds: ["Attaquant", "Ailier"],
+    recruitmentNeeds: { fr: ["Attaquant", "Ailier"], en: ["Striker", "Winger"] },
     budget: { min: 1000, max: 1500 },
     squadSize: 20,
-    facilities: ["Terrain synthétique", "Salle de musculation", "Analyses vidéo"],
+    facilities: { 
+      fr: ["Terrain synthétique", "Salle de musculation", "Analyses vidéo"],
+      en: ["Synthetic field", "Gym", "Video analysis"]
+    },
   },
 ];
 
@@ -52,17 +62,19 @@ export default function Discover() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const { toast } = useToast();
+  const { t, i18n } = useTranslation();
 
   const currentClub = mockClubs[currentIndex];
   const hasMoreClubs = currentIndex < mockClubs.length - 1;
+  const lang = i18n.language as 'fr' | 'en';
 
   const handleSwipe = (direction: "left" | "right") => {
     setSwipeDirection(direction);
 
     if (direction === "right") {
       toast({
-        title: "C'est un Match ! 🎉",
-        description: `${currentClub.name} est aussi intéressé !`,
+        title: t('matches.newMatch'),
+        description: `${currentClub.name} ${t('matches.interested')}`,
       });
     }
 
@@ -79,12 +91,12 @@ export default function Discover() {
       <div className="min-h-screen bg-background flex items-center justify-center pb-20">
         <div className="text-center px-4">
           <div className="text-6xl mb-4">🎯</div>
-          <h2 className="text-2xl font-bold mb-2">Plus de profils</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('discover.noMore')}</h2>
           <p className="text-muted-foreground mb-6">
-            Reviens plus tard pour découvrir de nouveaux clubs
+            {t('discover.noMoreDescription')}
           </p>
           <Button onClick={() => setCurrentIndex(0)}>
-            Revoir les profils
+            {t('discover.backButton')}
           </Button>
         </div>
         <BottomNav />
@@ -97,7 +109,7 @@ export default function Discover() {
       <div className="max-w-lg mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Découvrir</h1>
+          <h1 className="text-2xl font-bold">{t('discover.title')}</h1>
           <Badge variant="secondary" className="text-sm">
             {mockClubs.length - currentIndex} club{mockClubs.length - currentIndex > 1 ? "s" : ""}
           </Badge>
@@ -118,50 +130,69 @@ export default function Discover() {
             <div className="bg-card rounded-3xl overflow-hidden shadow-xl h-full flex flex-col">
               {/* Banner with Logo */}
               <div 
-                className="h-48 relative"
+                className="h-48 relative flex items-center justify-center"
                 style={{ background: currentClub.banner }}
               >
-                <div className="absolute -bottom-12 left-6">
-                  <div className="w-24 h-24 bg-card rounded-3xl flex items-center justify-center text-5xl shadow-lg border-4 border-background">
-                    {currentClub.logo}
-                  </div>
+                <div className="text-8xl animate-scale-in">
+                  {currentClub.logo}
                 </div>
-                {/* Match Score */}
-                <div className="absolute top-4 right-4 bg-success text-success-foreground px-4 py-2 rounded-full font-bold text-sm shadow-lg">
-                  {currentClub.matchScore}% match
+                
+                {/* Match Score Badge */}
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${
+                      currentClub.matchScore > 85 ? 'bg-success' : 'bg-secondary'
+                    }`} />
+                    <span className="font-bold text-sm">{currentClub.matchScore}% match</span>
+                  </div>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="flex-1 p-6 pt-16 overflow-y-auto scrollbar-hide">
-                <h2 className="text-2xl font-bold mb-1">{currentClub.name}</h2>
-                <div className="flex items-center gap-2 mb-4">
-                  <Badge variant="secondary">{currentClub.division}</Badge>
-                  <Badge variant="outline">📍 {currentClub.city}</Badge>
+              <div className="flex-1 p-6 overflow-y-auto">
+                {/* Club Name & Location */}
+                <div className="mb-6">
+                  <h2 className="text-3xl font-bold mb-2">{currentClub.name}</h2>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="text-lg">📍 {currentClub.city}</span>
+                  </div>
                 </div>
 
-                {/* Info Grid */}
+                {/* Quick Info Grid */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="bg-muted rounded-xl p-3 text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Budget</div>
-                    <div className="font-bold text-sm">{currentClub.budget.min}-{currentClub.budget.max}€</div>
+                  <div className="bg-background rounded-xl p-3 text-center">
+                    <div className="text-2xl mb-1">🏆</div>
+                    <div className="text-xs text-muted-foreground mb-1">{t('discover.division')}</div>
+                    <div className="font-semibold text-sm">{currentClub.division}</div>
                   </div>
-                  <div className="bg-muted rounded-xl p-3 text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Effectif</div>
-                    <div className="font-bold text-sm">{currentClub.squadSize} joueurs</div>
+                  <div className="bg-background rounded-xl p-3 text-center">
+                    <div className="text-2xl mb-1">💰</div>
+                    <div className="text-xs text-muted-foreground mb-1">{t('discover.budget')}</div>
+                    <div className="font-semibold text-sm">
+                      {currentClub.budget.min}-{currentClub.budget.max}k€
+                    </div>
                   </div>
-                  <div className="bg-muted rounded-xl p-3 text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Division</div>
-                    <div className="font-bold text-sm">{currentClub.division.split(" ")[1]}</div>
+                  <div className="bg-background rounded-xl p-3 text-center">
+                    <div className="text-2xl mb-1">👥</div>
+                    <div className="text-xs text-muted-foreground mb-1">{t('discover.squad')}</div>
+                    <div className="font-semibold text-sm">
+                      {currentClub.squadSize} {t('common.players')}
+                    </div>
                   </div>
                 </div>
 
                 {/* Recruitment Needs */}
                 <div className="mb-6">
-                  <h3 className="font-bold mb-2">🎯 On recherche</h3>
+                  <h3 className="font-bold mb-3 flex items-center gap-2">
+                    <span>🎯</span>
+                    {t('discover.recruiting')}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
-                    {currentClub.recruitmentNeeds.map((need) => (
-                      <Badge key={need} className="bg-primary/10 text-primary hover:bg-primary/20">
+                    {currentClub.recruitmentNeeds[lang].map((need, index) => (
+                      <Badge 
+                        key={index} 
+                        className="bg-primary/10 text-primary hover:bg-primary/20"
+                      >
                         {need}
                       </Badge>
                     ))}
@@ -170,11 +201,14 @@ export default function Discover() {
 
                 {/* Facilities */}
                 <div>
-                  <h3 className="font-bold mb-2">🏋️ Nos installations</h3>
+                  <h3 className="font-bold mb-3 flex items-center gap-2">
+                    <span>🏟️</span>
+                    {t('discover.facilities')}
+                  </h3>
                   <ul className="space-y-2">
-                    {currentClub.facilities.map((facility) => (
-                      <li key={facility} className="flex items-center gap-2 text-sm">
-                        <div className="w-1.5 h-1.5 bg-success rounded-full" />
+                    {currentClub.facilities[lang].map((facility, index) => (
+                      <li key={index} className="flex items-center gap-2 text-sm">
+                        <div className="w-1.5 h-1.5 rounded-full bg-success" />
                         {facility}
                       </li>
                     ))}
@@ -182,32 +216,7 @@ export default function Discover() {
                 </div>
               </div>
             </div>
-
-            {/* Swipe Overlays */}
-            {swipeDirection === "left" && (
-              <div className="absolute inset-0 bg-destructive/20 rounded-3xl flex items-center justify-center">
-                <X className="w-32 h-32 text-destructive" strokeWidth={3} />
-              </div>
-            )}
-            {swipeDirection === "right" && (
-              <div className="absolute inset-0 bg-success/20 rounded-3xl flex items-center justify-center">
-                <Heart className="w-32 h-32 text-success" strokeWidth={3} />
-              </div>
-            )}
           </div>
-
-          {/* Preview Cards (behind) */}
-          {hasMoreClubs && currentIndex + 1 < mockClubs.length && (
-            <div 
-              className="absolute inset-0 bg-card rounded-3xl shadow-lg"
-              style={{ 
-                top: "8px", 
-                scale: "0.95",
-                opacity: 0.5,
-                zIndex: -1
-              }}
-            />
-          )}
         </div>
 
         {/* Action Buttons */}
@@ -224,14 +233,14 @@ export default function Discover() {
           <Button
             size="lg"
             variant="outline"
-            className="w-14 h-14 rounded-full"
+            className="w-12 h-12 rounded-full"
           >
-            <Info className="w-6 h-6" />
+            <Info className="w-5 h-5" />
           </Button>
 
           <Button
             size="lg"
-            className="w-16 h-16 rounded-full bg-success hover:bg-success/90 text-success-foreground"
+            className="w-16 h-16 rounded-full bg-success hover:bg-success/90 text-white"
             onClick={() => handleSwipe("right")}
           >
             <Heart className="w-8 h-8" />
