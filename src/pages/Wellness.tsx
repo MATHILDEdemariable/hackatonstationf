@@ -153,45 +153,50 @@ export default function Wellness() {
               </div>
             </div>
           ) : (
-            // Active Session
-            <div className="space-y-6">
-              {/* Mock Conversation */}
-              <div className="space-y-4 mb-8">
-                <div className="flex gap-3">
+            // Active Session - Widget centré
+            <div className="min-h-[calc(100vh-200px)] flex flex-col">
+              {/* Message d'intro du coach (compact) */}
+              <div className="mb-6">
+                <div className="flex gap-3 items-start">
                   <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl flex-shrink-0">
                     🧠
                   </div>
-                  <div className="bg-white/95 rounded-2xl rounded-tl-none p-4 max-w-[80%]">
+                  <div className="bg-white/95 rounded-2xl rounded-tl-none p-3 max-w-[85%]">
                     <p className="text-sm">
                       {lang === 'fr' 
-                        ? "Je suis là pour t'accompagner. Comment puis-je t'aider aujourd'hui ?"
-                        : "I'm here to support you. How can I help you today?"}
+                        ? "Salut ! Je suis là pour t'accompagner. Comment puis-je t'aider aujourd'hui ?"
+                        : "Hi! I'm here to support you. How can I help you today?"}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* ElevenLabs Widget Area */}
-              <div className="bg-white/95 rounded-3xl p-6">
-                <div className="flex flex-col items-center gap-4 min-h-[300px] justify-center">
+              {/* Widget ElevenLabs - Centré et agrandi */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="w-full max-w-md">
                   <ElevenLabsWidget
                     agentId="agent_7901ka3n4540fbvsfav10f0e59yk"
                     isActive={isConversationActive}
-                    onConversationStart={() => console.log("Conversation started")}
+                    onConversationStart={() => {
+                      console.log("Conversation started");
+                    }}
                     onConversationEnd={() => {
                       console.log("Conversation ended");
                       setIsConversationActive(false);
                     }}
                   />
                 </div>
+              </div>
 
+              {/* Bouton Terminer - Position fixe en bas */}
+              <div className="mt-6">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setSessionActive(false);
                     setIsConversationActive(false);
                   }}
-                  className="w-full mt-4"
+                  className="w-full"
                 >
                   {t('wellness.endSession')}
                 </Button>
