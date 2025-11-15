@@ -22,10 +22,22 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          light: "hsl(var(--primary-light))",
+          dark: "hsl(var(--primary-dark))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+          light: "hsl(var(--success-light))",
+        },
+        wellness: {
+          DEFAULT: "hsl(var(--wellness))",
+          foreground: "hsl(var(--wellness-foreground))",
+          light: "hsl(var(--wellness-light))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -84,6 +96,11 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "swipe-right": "swipe-right 0.3s ease-out forwards",
+        "swipe-left": "swipe-left 0.3s ease-out forwards",
+        "scale-in": "scale-in 0.2s ease-out",
+        "pulse-ring": "pulse-ring 1.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite",
+        "fade-in": "fade-in 0.3s ease-out",
       },
     },
   },
