@@ -1,1 +1,7 @@
 project_id = "otcqrsdddaobopcdpslq"
+
+[functions.match-with-clubs]
+verify_jwt = true
+
+[functions.text-to-dialogue]
+verify_jwt = true
