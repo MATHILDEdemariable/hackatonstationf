@@ -3,6 +3,25 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
+// Mock user for demo mode
+const MOCK_USER: User = {
+  id: 'demo-athlete-123',
+  email: 'demo@athlete.com',
+  app_metadata: {},
+  user_metadata: { user_type: 'athlete' },
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+} as User;
+
+const MOCK_SESSION: Session = {
+  user: MOCK_USER,
+  access_token: 'mock-token',
+  refresh_token: 'mock-refresh',
+  expires_in: 3600,
+  expires_at: Date.now() + 3600000,
+  token_type: 'bearer',
+} as Session;
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -10,69 +29,42 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  isDemoMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Demo mode: Always use mock user
+  const [user, setUser] = useState<User | null>(MOCK_USER);
+  const [session, setSession] = useState<Session | null>(MOCK_SESSION);
+  const [loading, setLoading] = useState(false);
+  const isDemoMode = true;
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Auto-login with mock user for demo
+    setUser(MOCK_USER);
+    setSession(MOCK_SESSION);
+    setLoading(false);
   }, []);
 
   const signUp = async (email: string, password: string, userType: 'athlete' | 'club') => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          user_type: userType
-        }
-      }
-    });
-
-    return { error };
+    // Mock signup for demo
+    return { error: null };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    return { error };
+    // Mock signin for demo
+    return { error: null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    // Do nothing in demo mode
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, loading, isDemoMode }}>
       {children}
     </AuthContext.Provider>
   );

@@ -11,11 +11,16 @@ interface Step2Props {
   onChange: (data: Partial<PlayerProfile['metadata']>) => void;
 }
 
+// Generic positions for multiple sports
 const positions = [
-  { value: "striker", label: "Attaquant" },
-  { value: "midfielder", label: "Milieu" },
-  { value: "defender", label: "Défenseur" },
-  { value: "goalkeeper", label: "Gardien" },
+  { value: 'goalkeeper', label: 'Gardien / Goalkeeper' },
+  { value: 'defender', label: 'Défenseur / Defender' },
+  { value: 'midfielder', label: 'Milieu / Midfielder' },
+  { value: 'forward', label: 'Attaquant / Forward' },
+  { value: 'winger', label: 'Ailier / Winger' },
+  { value: 'striker', label: 'Buteur / Striker' },
+  { value: 'center', label: 'Centre / Center' },
+  { value: 'guard', label: 'Arrière / Guard' },
 ];
 
 export function Step2SportProfile({ data, onChange }: Step2Props) {
