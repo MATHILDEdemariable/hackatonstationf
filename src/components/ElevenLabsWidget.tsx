@@ -5,6 +5,7 @@ declare global {
     interface IntrinsicElements {
       'elevenlabs-convai': {
         'agent-id': string;
+        style?: React.CSSProperties;
       };
     }
   }
@@ -51,8 +52,8 @@ export function ElevenLabsWidget({
   if (!isActive) return null;
 
   return (
-    <div ref={widgetRef} className="w-full h-full flex items-center justify-center">
-      <elevenlabs-convai agent-id={agentId} />
+    <div ref={widgetRef} className="w-full h-full min-h-[400px] flex items-center justify-center">
+      <elevenlabs-convai agent-id={agentId} style={{ width: '100%', height: '400px', display: 'block' }} />
     </div>
   );
 }
