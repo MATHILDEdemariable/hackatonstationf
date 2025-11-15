@@ -45,7 +45,7 @@ export function Step2SportProfile({ data, onChange }: Step2Props) {
         <div>
           <Label htmlFor="position">Position principale *</Label>
           <Select
-            value={data.position}
+            value={data.position || ""}
             onValueChange={(val) => onChange({ ...data, position: val })}
           >
             <SelectTrigger id="position">
@@ -85,7 +85,7 @@ export function Step2SportProfile({ data, onChange }: Step2Props) {
         <div>
           <Label htmlFor="strongFoot">Pied fort *</Label>
           <Select
-            value={data.strongFoot}
+            value={data.strongFoot || ""}
             onValueChange={(val: "left" | "right" | "both") => 
               onChange({ ...data, strongFoot: val })
             }
@@ -104,7 +104,7 @@ export function Step2SportProfile({ data, onChange }: Step2Props) {
         <div>
           <Label htmlFor="level">Niveau actuel *</Label>
           <Select
-            value={data.level}
+            value={data.level || ""}
             onValueChange={(val: "amateur" | "semi-pro" | "professional") => 
               onChange({ ...data, level: val })
             }
