@@ -34,7 +34,8 @@ export default function Assistant() {
       setMessages([
         {
           role: "assistant",
-          content: "Bonjour ! 👋 Je suis ton assistant personnel spécialisé dans le conseil sportif. Je peux t'aider à:\n\n• Analyser tes opportunités avec les clubs\n• Préparer tes négociations de contrat\n• Comprendre les offres des clubs\n• Prendre des décisions éclairées sur ta carrière\n\nComment puis-je t'aider aujourd'hui ?",
+          content:
+            "Bonjour ! 👋 Je suis ton assistant personnel spécialisé dans le conseil sportif. Je peux t'aider à:\n\n• Analyser tes opportunités avec les clubs\n• Préparer tes négociations de contrat\n• Comprendre les offres des clubs\n• Prendre des décisions éclairées sur ta carrière\n\nComment puis-je t'aider aujourd'hui ?",
           id: "welcome",
           timestamp: new Date(),
         },
@@ -111,9 +112,7 @@ export default function Assistant() {
                 <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-2xl font-bold text-foreground">
-                  Assistant IA
-                </h1>
+                <h1 className="text-lg sm:text-2xl font-bold text-foreground">My Agent</h1>
                 <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                   Ton conseiller personnel pour trouver le club idéal
                 </p>
