@@ -79,6 +79,19 @@ export default function Negotiations() {
   const club = mockClubs[matchId || '1'];
   const locale = i18n.language === 'fr' ? fr : enUS;
 
+  if (!club) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-bold">{t('negotiations.notFound') || 'Match introuvable'}</h2>
+          <Button onClick={() => navigate('/app/matches')}>
+            {t('nav.matches') || 'Retour aux matches'}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const sendMessage = () => {
     if (!messageInput.trim()) return;
 
