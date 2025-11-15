@@ -4,29 +4,57 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Profile() {
   const { t } = useTranslation();
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock profile data for demo
-  const profile = {
-    full_name: 'Demo Athlete',
-    age: 24,
-    primary_position: 'Midfielder',
-    city: 'Paris',
-    level: 'Semi-Pro',
-    bio: 'Passionné de football depuis mon plus jeune âge, je cherche à rejoindre un club ambitieux pour progresser et atteindre mes objectifs professionnels.',
-    stats: {
-      goals: 15,
-      assists: 10,
-      matches_played: 100
-    },
-    strengths: ['speed', 'dribbling', 'shooting'],
-    playing_style: ['attacking', 'fast-paced'],
-    nationality: 'France',
-    experience_years: 5,
-    secondary_positions: ['Forward', 'Winger']
-  };
+  // Récupérer l'ID utilisateur de démo depuis localStorage
+  const demoUserId = localStorage.getItem('demoUserId');
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!demoUserId) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('athlete_profiles')
+        .select('*')
+        .eq('id', demoUserId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error loading profile:', error);
+        setLoading(false);
+        return;
+      }
+
+      setProfile(data);
+      setLoading(false);
+    };
+
+    loadProfile();
+  }, [demoUserId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement du profil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return null; // Will redirect in useEffect
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
