@@ -4,6 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const mockProfile = {
   name: "Lucas Martin",
@@ -33,7 +37,43 @@ const mockProfile = {
 
 export default function Profile() {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const lang = i18n.language as 'fr' | 'en';
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    const loadProfile = async () => {
+      const { data, error } = await supabase
+        .from('athlete_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error loading profile:', error);
+      } else {
+        setProfile(data);
+      }
+      setLoading(false);
+    };
+
+    loadProfile();
+  }, [user, navigate]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+  }
+
+  if (!profile) {
+    return <div className="min-h-screen flex items-center justify-center">Profil non trouvé</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -63,18 +103,18 @@ export default function Profile() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold mb-1">
-                {mockProfile.name}, {mockProfile.age} {t('common.years')}
+                {profile.full_name}, {profile.age} {t('common.years')}
               </h1>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className="bg-primary text-primary-foreground">
-                  {mockProfile.position[lang]}
+                  {profile.primary_position}
                 </Badge>
                 <Badge variant="outline" className="gap-1">
                   <MapPin className="w-3 h-3" />
-                  {mockProfile.city}
+                  {profile.city}
                 </Badge>
                 <Badge variant="secondary">
-                  {mockProfile.level[lang]}
+                  {profile.level}
                 </Badge>
               </div>
             </div>
@@ -82,7 +122,7 @@ export default function Profile() {
 
           {/* Bio */}
           <p className="text-muted-foreground mb-6">
-            {mockProfile.bio[lang]}
+            {profile.bio || t('profile.noBio')}
           </p>
 
           {/* Tabs */}
@@ -105,7 +145,7 @@ export default function Profile() {
                 <div className="bg-card rounded-2xl p-4 text-center shadow-md">
                   <div className="text-4xl mb-2">⚽</div>
                   <div className="text-2xl font-bold text-primary">
-                    {mockProfile.stats.goals}
+                    {profile.stats?.goals || 0}
                   </div>
                   <div className="text-sm text-muted-foreground">{t('profile.stats.goals')}</div>
                 </div>
@@ -113,7 +153,7 @@ export default function Profile() {
                 <div className="bg-card rounded-2xl p-4 text-center shadow-md">
                   <div className="text-4xl mb-2">🎯</div>
                   <div className="text-2xl font-bold text-success">
-                    {mockProfile.stats.assists}
+                    {profile.stats?.assists || 0}
                   </div>
                   <div className="text-sm text-muted-foreground">{t('profile.stats.assists')}</div>
                 </div>
@@ -121,7 +161,7 @@ export default function Profile() {
                 <div className="bg-card rounded-2xl p-4 text-center shadow-md">
                   <div className="text-4xl mb-2">🏃</div>
                   <div className="text-2xl font-bold text-secondary">
-                    {mockProfile.stats.matches}
+                    {profile.stats?.matches || 0}
                   </div>
                   <div className="text-sm text-muted-foreground">{t('profile.stats.matches')}</div>
                 </div>
@@ -129,43 +169,21 @@ export default function Profile() {
                 <div className="bg-card rounded-2xl p-4 text-center shadow-md">
                   <div className="text-4xl mb-2">⏱️</div>
                   <div className="text-2xl font-bold text-wellness">
-                    {mockProfile.stats.minutesPlayed}
+                    {profile.stats?.minutesPlayed || 0}
                   </div>
                   <div className="text-sm text-muted-foreground">{t('profile.stats.minutes')}</div>
                 </div>
               </div>
 
-              {/* Performance Chart Placeholder */}
-              <div className="bg-card rounded-2xl p-6 shadow-md">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  <h3 className="font-bold">{t('profile.performance')}</h3>
-                </div>
-                <div className="h-40 bg-gradient-to-r from-primary/5 to-success/5 rounded-xl flex items-center justify-center">
-                  <p className="text-muted-foreground">{lang === 'fr' ? 'Graphique à venir' : 'Chart coming soon'}</p>
-                </div>
-              </div>
-
-              {/* Achievements */}
+              {/* Strengths */}
               <div>
                 <h3 className="font-bold mb-3 flex items-center gap-2">
-                  <span>🏆</span>
-                  {t('profile.achievements')}
+                  <span>⚡</span>
+                  {t('profile.strengths')}
                 </h3>
-                <div className="space-y-2">
-                  {mockProfile.achievements.map((achievement) => (
-                    <div
-                      key={achievement.id}
-                      className="bg-card rounded-xl p-4 shadow-sm flex items-center gap-3"
-                    >
-                      <div className="w-10 h-10 bg-gradient-sport rounded-lg flex items-center justify-center text-xl">
-                        🏆
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold">{achievement.title[lang]}</p>
-                        <p className="text-sm text-muted-foreground">{achievement.year}</p>
-                      </div>
-                    </div>
+                <div className="flex flex-wrap gap-2">
+                  {profile.strengths?.map((strength: string, i: number) => (
+                    <Badge key={i} variant="secondary">{strength}</Badge>
                   ))}
                 </div>
               </div>
@@ -176,6 +194,30 @@ export default function Profile() {
               <div className="bg-card rounded-2xl p-6 shadow-md space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">{t('profile.age')}</span>
+                  <span className="font-semibold">{profile.age} {t('common.years')}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t('profile.city')}</span>
+                  <span className="font-semibold">{profile.city}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t('profile.position')}</span>
+                  <span className="font-semibold">{profile.primary_position}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t('profile.level')}</span>
+                  <span className="font-semibold">{profile.level}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t('profile.info.strongFoot')}</span>
+                  <span className="font-semibold">{profile.dominant_side}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Expérience</span>
+                  <span className="font-semibold">{profile.experience_years} ans</span>
+                </div>
+              </div>
+            </TabsContent>
                   <span className="font-semibold">{mockProfile.age} {t('common.years')}</span>
                 </div>
                 <div className="flex items-center justify-between">

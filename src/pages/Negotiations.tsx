@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, MoreVertical, PaperclipIcon } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, PaperclipIcon, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import OfferCard from "@/components/chat/OfferCard";
 import CounterOfferModal from "@/components/chat/CounterOfferModal";
+import { ElevenLabsWidget } from "@/components/ElevenLabsWidget";
 
 interface Message {
   id: string;
@@ -75,6 +76,7 @@ export default function Negotiations() {
   const [messageInput, setMessageInput] = useState('');
   const [showCounterModal, setShowCounterModal] = useState(false);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [showVoiceCall, setShowVoiceCall] = useState(false);
 
   const club = mockClubs[matchId || '1'];
   const locale = i18n.language === 'fr' ? fr : enUS;
@@ -188,6 +190,18 @@ export default function Negotiations() {
           <MoreVertical className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* Voice Call Widget */}
+      {showVoiceCall && (
+        <div className="h-96 border-b bg-card p-4">
+          <ElevenLabsWidget 
+            agentId="agent_6501ka3skkdwegqa1w8kbea3wh79"
+            isActive={showVoiceCall}
+            onConversationStart={() => console.log('Voice call started')}
+            onConversationEnd={() => setShowVoiceCall(false)}
+          />
+        </div>
+      )}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
