@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { PlayerProfile } from "@/types/matching.types";
 import { generatePlayerEmbedding } from "@/lib/embeddings";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 import { Step1PersonalInfo } from "@/components/onboarding/Step1PersonalInfo";
 import { Step2SportProfile } from "@/components/onboarding/Step2SportProfile";
@@ -23,9 +25,10 @@ const steps = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedSport, setSelectedSport] = useState<string>('');
   const [formData, setFormData] = useState<Partial<PlayerProfile['metadata']>>({
-    // Initialize with empty values
     stats: {
       goals: 0,
       assists: 0,
@@ -39,6 +42,28 @@ export default function Onboarding() {
     playingStyle: [],
     personality: [],
   });
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
+    // Load sport selection and progress from Supabase if exists
+    const loadProgress = async () => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.user_type !== 'athlete') {
+        navigate('/club/onboarding');
+      }
+    };
+    
+    loadProgress();
+  }, [user, navigate]);
 
   const validateStep = (step: number, data: Partial<PlayerProfile['metadata']>): boolean => {
     switch (step) {
@@ -65,12 +90,6 @@ export default function Onboarding() {
       return;
     }
 
-    // Save progress to localStorage
-    localStorage.setItem('onboarding_progress', JSON.stringify({ 
-      step: currentStep, 
-      data: formData 
-    }));
-
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -79,33 +98,57 @@ export default function Onboarding() {
   };
 
   const createPlayerProfile = async () => {
+    if (!user || !selectedSport) {
+      toast.error("Session invalide");
+      return;
+    }
+
     toast.loading("Création de ton profil...");
     
     try {
       // Generate embedding
       const embedding = await generatePlayerEmbedding(formData);
       
-      // Create complete profile
-      const profile: PlayerProfile = {
-        id: `player_${Date.now()}`,
-        metadata: {
-          ...formData,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        } as PlayerProfile['metadata'],
-        vector: embedding
-      };
+      // Save to athlete_profiles table
+      const { error: insertError } = await supabase
+        .from('athlete_profiles')
+        .insert({
+          id: user.id,
+          sport_id: selectedSport,
+          full_name: formData.name || '',
+          birth_date: formData.birthDate || new Date().toISOString(),
+          age: formData.age,
+          nationality: formData.nationality || '',
+          city: formData.city || '',
+          primary_position: formData.position || '',
+          secondary_positions: formData.secondaryPositions || [],
+          dominant_side: formData.strongFoot || '',
+          level: formData.level || '',
+          experience_years: formData.experienceYears || 0,
+          stats: formData.stats || {},
+          strengths: formData.strengths || [],
+          playing_style: formData.playingStyle || [],
+          personality_traits: formData.personality || [],
+          career_preferences: formData.careerGoals || {},
+          embedding_vector: embedding.join(','),
+        });
 
-      // Save to localStorage (in production, send to backend)
-      localStorage.setItem('player_profile', JSON.stringify(profile));
-      localStorage.removeItem('onboarding_progress');
+      if (insertError) throw insertError;
+
+      // Call match-with-clubs edge function
+      const { data: matchData, error: matchError } = await supabase.functions.invoke('match-with-clubs', {
+        body: { athlete_id: user.id }
+      });
+
+      if (matchError) {
+        console.error('Matching error:', matchError);
+      } else {
+        console.log('Matching results:', matchData);
+      }
 
       toast.success("Profil créé avec succès !");
       
-      // Navigate to discover page
-      setTimeout(() => {
-        navigate('/discover');
-      }, 1000);
+      navigate('/discover');
       
     } catch (error) {
       console.error('Error creating profile:', error);
