@@ -6,6 +6,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import BottomNav from "@/components/BottomNav";
+import { MarkdownMessage } from "@/components/chat/MarkdownMessage";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/hooks/use-toast";
 import { 
@@ -166,22 +167,22 @@ export default function Chat() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-20">
-      <div className="max-w-lg mx-auto w-full flex flex-col h-screen">
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="max-w-4xl mx-auto w-full flex flex-col h-screen">
         {/* Header */}
-        <div className="bg-card border-b border-border px-4 py-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+        <div className="bg-card border-b border-border px-3 sm:px-4 py-3 sm:py-4 sticky top-0 z-10">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Avatar className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h1 className="font-bold text-lg">{t('chat.title')}</h1>
-                <Badge variant="secondary" className="text-xs">Mistral AI</Badge>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h1 className="font-bold text-base sm:text-lg truncate">{t('chat.title')}</h1>
+                <Badge variant="secondary" className="text-[10px] sm:text-xs flex-shrink-0">Mistral AI</Badge>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <p className="text-xs text-muted-foreground">
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
                   {lang === 'fr' ? 'En ligne' : 'Online'}
                 </p>
               </div>
@@ -190,8 +191,8 @@ export default function Chat() {
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-          <div className="space-y-4 pb-4">
+        <ScrollArea className="flex-1 px-3 sm:px-4 md:px-6 py-4" ref={scrollRef}>
+          <div className="space-y-3 sm:space-y-4 pb-4 max-w-3xl mx-auto">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -200,15 +201,22 @@ export default function Chat() {
                 }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-sm ${
+                  className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm ${
                     message.role === "user"
                       ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground"
                       : "bg-card border border-border"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                  {message.role === "assistant" ? (
+                    <MarkdownMessage 
+                      content={message.content}
+                      className={message.role === "user" ? "prose-invert" : ""}
+                    />
+                  ) : (
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                  )}
                   <p
-                    className={`text-xs mt-1.5 ${
+                    className={`text-[10px] sm:text-xs mt-1 sm:mt-1.5 ${
                       message.role === "user"
                         ? "text-primary-foreground/70"
                         : "text-muted-foreground"
@@ -224,10 +232,10 @@ export default function Chat() {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-card border border-border rounded-2xl px-4 py-3 shadow-sm">
+                <div className="bg-card border border-border rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm">
                   <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                    <span className="text-sm text-muted-foreground">
+                    <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin text-primary" />
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {lang === 'fr' ? 'Réflexion en cours...' : 'Thinking...'}
                     </span>
                   </div>
@@ -241,15 +249,15 @@ export default function Chat() {
                 <p className="text-xs text-muted-foreground text-center mb-3">
                   {lang === 'fr' ? 'Suggestions rapides :' : 'Quick suggestions:'}
                 </p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {quickPrompts[lang].map((prompt, index) => (
                     <Button
                       key={index}
                       variant="outline"
-                      className="h-auto py-3 px-3 text-left justify-start whitespace-normal"
+                      className="h-auto py-2.5 sm:py-3 px-3 text-left justify-start whitespace-normal hover:bg-accent transition-colors"
                       onClick={() => handleQuickPrompt(prompt)}
                     >
-                      <span className="text-xs">{prompt}</span>
+                      <span className="text-xs sm:text-sm">{prompt}</span>
                     </Button>
                   ))}
                 </div>
@@ -259,28 +267,30 @@ export default function Chat() {
         </ScrollArea>
 
         {/* Input */}
-        <div className="bg-card border-t border-border px-4 py-4 space-y-2">
-          <div className="flex items-end gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={t('chat.inputPlaceholder')}
-              disabled={isLoading}
-              className="flex-1 rounded-2xl min-h-[44px] py-3"
-            />
-            <Button
-              onClick={() => sendMessage()}
-              disabled={!input.trim() || isLoading}
-              size="icon"
-              className="rounded-full w-11 h-11 flex-shrink-0"
-            >
-              <Send className="w-5 h-5" />
-            </Button>
+        <div className="bg-card border-t border-border px-3 sm:px-4 md:px-6 py-3 sm:py-4 space-y-2 pb-safe">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-end gap-2">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={t('chat.inputPlaceholder')}
+                disabled={isLoading}
+                className="flex-1 rounded-2xl min-h-[44px] py-2.5 sm:py-3 text-sm"
+              />
+              <Button
+                onClick={() => sendMessage()}
+                disabled={!input.trim() || isLoading}
+                size="icon"
+                className="rounded-full w-11 h-11 flex-shrink-0"
+              >
+                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+              </Button>
+            </div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground text-center mt-2">
+              {t('chat.disclaimer')}
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground text-center">
-            {t('chat.disclaimer')}
-          </p>
         </div>
       </div>
 
