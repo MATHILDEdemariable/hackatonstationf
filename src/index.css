@@ -256,3 +256,50 @@ All colors MUST be HSL.
     box-shadow: 0 0 0 0 hsl(214 88% 51% / 0);
   }
 }
+
+/* Custom scrollbar styles for chat */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.3);
+}
+
+/* Better code block styling */
+pre code {
+  display: block;
+  width: 100%;
+}
+
+/* Safe area for iOS devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Smooth transitions for chat messages */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for new messages */
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out;
+}

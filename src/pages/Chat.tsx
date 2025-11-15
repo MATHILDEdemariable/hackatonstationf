@@ -167,8 +167,8 @@ export default function Chat() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <div className="max-w-4xl mx-auto w-full flex flex-col h-screen">
+    <div className="min-h-screen bg-background flex flex-col pb-16">
+      <div className="max-w-4xl mx-auto w-full flex flex-col h-screen pb-16">
         {/* Header */}
         <div className="bg-card border-b border-border px-3 sm:px-4 py-3 sm:py-4 sticky top-0 z-10">
           <div className="flex items-center gap-2 sm:gap-3">
