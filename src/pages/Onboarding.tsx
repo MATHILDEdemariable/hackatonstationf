@@ -25,7 +25,7 @@ const steps = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedSport, setSelectedSport] = useState<string>('');
   const [formData, setFormData] = useState<Partial<PlayerProfile['metadata']>>({
@@ -44,6 +44,9 @@ export default function Onboarding() {
   });
 
   useEffect(() => {
+    // Wait for loading to complete before checking user
+    if (loading) return;
+    
     if (!user) {
       navigate('/auth');
       return;
@@ -63,7 +66,7 @@ export default function Onboarding() {
     };
     
     loadProgress();
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const validateStep = (step: number, data: Partial<PlayerProfile['metadata']>): boolean => {
     switch (step) {
@@ -96,6 +99,18 @@ export default function Onboarding() {
       await createPlayerProfile();
     }
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   const createPlayerProfile = async () => {
     if (!user || !selectedSport) {

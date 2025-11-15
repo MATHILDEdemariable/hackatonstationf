@@ -186,9 +186,20 @@ export default function Negotiations() {
           </div>
         </div>
 
-        <Button variant="ghost" size="icon">
-          <MoreVertical className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant={showVoiceCall ? "default" : "ghost"} 
+            size="icon"
+            onClick={() => setShowVoiceCall(!showVoiceCall)}
+            className={showVoiceCall ? "bg-green-500 hover:bg-green-600" : ""}
+          >
+            <Phone className="w-5 h-5" />
+          </Button>
+
+          <Button variant="ghost" size="icon">
+            <MoreVertical className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Voice Call Widget */}
