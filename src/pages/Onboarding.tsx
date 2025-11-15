@@ -24,8 +24,8 @@ const steps = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  // Créer un ID temporaire pour la démo (pas d'authentification requise)
-  const [demoUserId] = useState(() => `demo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  // Créer un UUID valide pour la démo
+  const [demoUserId] = useState(() => crypto.randomUUID());
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedSport, setSelectedSport] = useState<string>('football'); // Sport par défaut
   const [formData, setFormData] = useState<Partial<PlayerProfile['metadata']>>({
@@ -86,6 +86,19 @@ export default function Onboarding() {
     try {
       // Generate embedding
       const embedding = await generatePlayerEmbedding(formData);
+      
+      // First, create profile entry
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: demoUserId,
+          email: `demo-${demoUserId}@example.com`,
+          user_type: 'athlete'
+        });
+
+      if (profileError && profileError.code !== '23505') { // Ignore duplicate key error
+        throw profileError;
+      }
       
       // Save to athlete_profiles table with demo user ID
       const { error: insertError } = await supabase
