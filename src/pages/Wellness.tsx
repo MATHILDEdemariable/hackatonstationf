@@ -139,9 +139,11 @@ export default function Wellness() {
                   <p className="text-muted-foreground">{t('wellness.listening')}</p>
                 </div>
 
-                {/* ElevenLabs Widget */}
-                <div className="w-full flex items-center justify-center min-h-[400px]">
-                  <elevenlabs-convai agent-id="agent_7901ka3n4540fbvsfav10f0e59yk" />
+                {/* ElevenLabs Widget - Centered and visible */}
+                <div className="w-full flex flex-col items-center justify-center py-8">
+                  <div className="w-full max-w-md">
+                    <elevenlabs-convai agent-id="agent_7901ka3n4540fbvsfav10f0e59yk" />
+                  </div>
                 </div>
 
                 <Button
