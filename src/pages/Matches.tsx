@@ -1,6 +1,8 @@
-import { Search, ChevronRight } from "lucide-react";
+import { Search, MessageSquare } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
 import { useTranslation } from "react-i18next";
@@ -90,7 +92,7 @@ export default function Matches() {
           {mockMatches.map((match) => (
             <div
               key={match.id}
-              className="bg-card rounded-2xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer hover-lift"
+              className="bg-card rounded-2xl p-4 shadow-md hover:shadow-lg transition-all"
             >
               <div className="flex items-center gap-4">
                 {/* Avatar */}
@@ -119,8 +121,13 @@ export default function Matches() {
                   </p>
                 </div>
 
-                {/* Arrow */}
-                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                {/* Negotiate Button */}
+                <Link to={`/app/negotiations/${match.id}`}>
+                  <Button size="sm" className="flex-shrink-0">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    {t('matches.negotiate')}
+                  </Button>
+                </Link>
               </div>
             </div>
           ))}

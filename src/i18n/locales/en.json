@@ -47,7 +47,8 @@
     "continueSwiping": "Continue swiping",
     "noMatches": "No matches yet",
     "noMatchesDescription": "Keep swiping to find your ideal club",
-    "goDiscover": "Discover clubs"
+    "goDiscover": "Discover clubs",
+    "negotiate": "Negotiate"
   },
   "wellness": {
     "title": "Wellness Coach",
@@ -114,6 +115,93 @@
   "common": {
     "years": "years old",
     "players": "players"
+  },
+  "landing": {
+    "hero": {
+      "title": "The Tinder for Sports",
+      "subtitle": "Connect athletes and clubs with AI",
+      "ctaAthlete": "I'm an athlete",
+      "ctaClub": "I'm a club",
+      "clubComingSoon": "Club interface coming soon!"
+    },
+    "howItWorks": {
+      "title": "How does it work?",
+      "forAthletes": "For Athletes",
+      "forClubs": "For Clubs",
+      "athlete": {
+        "step1": "Create your profile in 5 min",
+        "step1Desc": "Fill in your info, stats and career preferences",
+        "step2": "Swipe clubs that interest you",
+        "step2Desc": "Discover clubs recruiting in your area",
+        "step3": "Match and negotiate your contract",
+        "step3Desc": "Chat directly with interested clubs"
+      },
+      "club": {
+        "step1": "Define your needs",
+        "step1Desc": "Specify positions needed and your budget",
+        "step2": "Discover talents",
+        "step2Desc": "AI suggests the most relevant profiles",
+        "step3": "Recruit directly",
+        "step3Desc": "Negotiate and sign directly on the platform"
+      }
+    },
+    "features": {
+      "title": "Features",
+      "matching": "Smart AI Matching",
+      "matchingDesc": "Matching algorithm based on your skills and preferences",
+      "negotiation": "Real-time Negotiation",
+      "negotiationDesc": "Chat and negotiate your contract directly with clubs",
+      "wellness": "Voice Wellness Coach",
+      "wellnessDesc": "AI coach available 24/7 for your mental health",
+      "stats": "Detailed Statistics",
+      "statsDesc": "Analyze your performance and evolution"
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "subtitle": "Join thousands of athletes who found their ideal club",
+      "button": "Create my profile"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    }
+  },
+  "negotiations": {
+    "title": "Negotiation",
+    "inputPlaceholder": "Write a message...",
+    "online": "Online",
+    "offline": "Offline",
+    "offer": {
+      "title": "Contract Offer",
+      "salary": "Salary",
+      "duration": "Contract duration",
+      "bonuses": "Bonuses",
+      "housing": "Housing provided",
+      "insurance": "Health insurance",
+      "transportation": "Transportation fees",
+      "startDate": "Start date",
+      "perMonth": "per month",
+      "month": "month",
+      "months": "months",
+      "performanceBonuses": "Performance bonuses",
+      "accept": "Accept offer",
+      "reject": "Reject",
+      "counter": "Counter-offer"
+    },
+    "counterOffer": {
+      "title": "Make a counter-offer",
+      "additionalConditions": "Additional conditions",
+      "message": "Message",
+      "messagePlaceholder": "Explain your counter-offer...",
+      "cancel": "Cancel",
+      "send": "Send counter-offer"
+    },
+    "status": {
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "counter_offered": "Counter-offer sent",
+      "offerAccepted": "✓ You accepted the offer!"
+    }
   },
   "onboarding": {
     "step1": {

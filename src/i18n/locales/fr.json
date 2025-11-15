@@ -47,7 +47,8 @@
     "continueSwiping": "Continuer à swiper",
     "noMatches": "Aucun match pour l'instant",
     "noMatchesDescription": "Continue à swiper pour trouver ton club idéal",
-    "goDiscover": "Découvrir des clubs"
+    "goDiscover": "Découvrir des clubs",
+    "negotiate": "Négocier"
   },
   "wellness": {
     "title": "Coach Wellness",
@@ -114,6 +115,93 @@
   "common": {
     "years": "ans",
     "players": "joueurs"
+  },
+  "landing": {
+    "hero": {
+      "title": "Le Tinder du Sport",
+      "subtitle": "Connecte joueurs et clubs avec l'IA",
+      "ctaAthlete": "Je suis un sportif",
+      "ctaClub": "Je suis un club",
+      "clubComingSoon": "L'interface club arrive bientôt !"
+    },
+    "howItWorks": {
+      "title": "Comment ça marche ?",
+      "forAthletes": "Pour les sportifs",
+      "forClubs": "Pour les clubs",
+      "athlete": {
+        "step1": "Crée ton profil en 5 min",
+        "step1Desc": "Renseigne tes infos, stats et préférences de carrière",
+        "step2": "Swipe les clubs qui t'intéressent",
+        "step2Desc": "Découvre des clubs qui recrutent dans ta région",
+        "step3": "Matche et négocie ton contrat",
+        "step3Desc": "Discute directement avec les clubs intéressés"
+      },
+      "club": {
+        "step1": "Définis tes besoins",
+        "step1Desc": "Indique les postes recherchés et ton budget",
+        "step2": "Découvre des talents",
+        "step2Desc": "L'IA te propose les profils les plus pertinents",
+        "step3": "Recrute en direct",
+        "step3Desc": "Négocie et signe directement sur la plateforme"
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités",
+      "matching": "Matching intelligent avec IA",
+      "matchingDesc": "Algorithme de matching basé sur tes compétences et tes préférences",
+      "negotiation": "Négociation en temps réel",
+      "negotiationDesc": "Discute et négocie ton contrat directement avec les clubs",
+      "wellness": "Coach Wellness vocal",
+      "wellnessDesc": "Un coach IA disponible 24/7 pour ton mental",
+      "stats": "Statistiques détaillées",
+      "statsDesc": "Analyse tes performances et ton évolution"
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "subtitle": "Rejoins des milliers de sportifs qui ont trouvé leur club idéal",
+      "button": "Créer mon profil"
+    },
+    "footer": {
+      "rights": "Tous droits réservés."
+    }
+  },
+  "negotiations": {
+    "title": "Négociation",
+    "inputPlaceholder": "Écris un message...",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "offer": {
+      "title": "Offre de contrat",
+      "salary": "Salaire",
+      "duration": "Durée du contrat",
+      "bonuses": "Primes",
+      "housing": "Logement fourni",
+      "insurance": "Assurance santé",
+      "transportation": "Frais de déplacement",
+      "startDate": "Date de début",
+      "perMonth": "par mois",
+      "month": "mois",
+      "months": "mois",
+      "performanceBonuses": "Primes de performance",
+      "accept": "Accepter l'offre",
+      "reject": "Refuser",
+      "counter": "Contre-proposition"
+    },
+    "counterOffer": {
+      "title": "Faire une contre-proposition",
+      "additionalConditions": "Conditions supplémentaires",
+      "message": "Message",
+      "messagePlaceholder": "Explique ta contre-proposition...",
+      "cancel": "Annuler",
+      "send": "Envoyer la contre-offre"
+    },
+    "status": {
+      "accepted": "Acceptée",
+      "rejected": "Refusée",
+      "pending": "En attente",
+      "counter_offered": "Contre-offre envoyée",
+      "offerAccepted": "✓ Vous avez accepté l'offre !"
+    }
   },
   "onboarding": {
     "step1": {

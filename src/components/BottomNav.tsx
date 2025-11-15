@@ -8,10 +8,10 @@ export default function BottomNav() {
   const { t } = useTranslation();
   
   const navItems = [
-    { path: "/", icon: Home, label: t('nav.home') },
-    { path: "/discover", icon: Users, label: t('nav.discover') },
-    { path: "/matches", icon: Heart, label: t('nav.matches') },
-    { path: "/profile", icon: User, label: t('nav.profile') },
+    { path: "/app", icon: Home, label: t('nav.home') },
+    { path: "/app/discover", icon: Users, label: t('nav.discover') },
+    { path: "/app/matches", icon: Heart, label: t('nav.matches') },
+    { path: "/app/profile", icon: User, label: t('nav.profile') },
   ];
 
   return (
