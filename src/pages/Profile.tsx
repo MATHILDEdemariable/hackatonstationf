@@ -4,64 +4,29 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
-    const loadProfile = async () => {
-      const { data, error } = await supabase
-        .from('athlete_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error loading profile:', error);
-        setLoading(false);
-        return;
-      }
-
-      if (!data) {
-        // No profile found, redirect to onboarding
-        navigate('/app/onboarding');
-        return;
-      }
-
-      setProfile(data);
-      setLoading(false);
-    };
-
-    loadProfile();
-  }, [user, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement du profil...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return null; // Will redirect in useEffect
-  }
+  // Mock profile data for demo
+  const profile = {
+    full_name: 'Demo Athlete',
+    age: 24,
+    primary_position: 'Midfielder',
+    city: 'Paris',
+    level: 'Semi-Pro',
+    bio: 'Passionné de football depuis mon plus jeune âge, je cherche à rejoindre un club ambitieux pour progresser et atteindre mes objectifs professionnels.',
+    stats: {
+      goals: 15,
+      assists: 10,
+      matches_played: 100
+    },
+    strengths: ['speed', 'dribbling', 'shooting'],
+    playing_style: ['attacking', 'fast-paced'],
+    nationality: 'France',
+    experience_years: 5,
+    secondary_positions: ['Forward', 'Winger']
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -107,7 +72,7 @@ export default function Profile() {
 
           {/* Bio */}
           <p className="text-muted-foreground mb-6">
-            {profile.bio || "Aucune bio"}
+            {profile.bio}
           </p>
 
           {/* Tabs */}
@@ -119,107 +84,99 @@ export default function Profile() {
               <TabsTrigger value="info" className="flex-1">
                 {t('profile.tabs.about')}
               </TabsTrigger>
-              <TabsTrigger value="videos" className="flex-1">
-                {t('profile.tabs.videos')}
+              <TabsTrigger value="video" className="flex-1">
+                {t('profile.tabs.highlights')}
               </TabsTrigger>
             </TabsList>
 
-            {/* Stats Tab */}
-            <TabsContent value="stats" className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-card rounded-2xl p-4 text-center shadow-md">
-                  <div className="text-4xl mb-2">⚽</div>
-                  <div className="text-2xl font-bold text-primary">
-                    {profile.stats?.goals || 0}
+            <TabsContent value="stats" className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-card rounded-xl p-4 text-center border">
+                  <div className="text-3xl font-bold text-primary">{profile.stats.goals}</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {t('profile.stats.goals')}
                   </div>
-                  <div className="text-sm text-muted-foreground">{t('profile.stats.goals')}</div>
                 </div>
-
-                <div className="bg-card rounded-2xl p-4 text-center shadow-md">
-                  <div className="text-4xl mb-2">🎯</div>
-                  <div className="text-2xl font-bold text-success">
-                    {profile.stats?.assists || 0}
+                <div className="bg-card rounded-xl p-4 text-center border">
+                  <div className="text-3xl font-bold text-primary">{profile.stats.assists}</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {t('profile.stats.assists')}
                   </div>
-                  <div className="text-sm text-muted-foreground">{t('profile.stats.assists')}</div>
                 </div>
-
-                <div className="bg-card rounded-2xl p-4 text-center shadow-md">
-                  <div className="text-4xl mb-2">🏃</div>
-                  <div className="text-2xl font-bold text-secondary">
-                    {profile.stats?.matches || 0}
+                <div className="bg-card rounded-xl p-4 text-center border">
+                  <div className="text-3xl font-bold text-primary">{profile.stats.matches_played}</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {t('profile.stats.matches')}
                   </div>
-                  <div className="text-sm text-muted-foreground">{t('profile.stats.matches')}</div>
-                </div>
-
-                <div className="bg-card rounded-2xl p-4 text-center shadow-md">
-                  <div className="text-4xl mb-2">⏱️</div>
-                  <div className="text-2xl font-bold text-wellness">
-                    {profile.stats?.minutesPlayed || 0}
-                  </div>
-                  <div className="text-sm text-muted-foreground">{t('profile.stats.minutes')}</div>
                 </div>
               </div>
 
-              {/* Strengths */}
-              <div>
-                <h3 className="font-bold mb-3 flex items-center gap-2">
-                  <span>⚡</span>
-                  {t('profile.strengths')}
-                </h3>
+              <div className="bg-card rounded-xl p-4 border">
+                <h3 className="font-semibold mb-3">{t('profile.strengths')}</h3>
                 <div className="flex flex-wrap gap-2">
-                  {profile.strengths?.map((strength: string, i: number) => (
-                    <Badge key={i} variant="secondary">{strength}</Badge>
+                  {profile.strengths.map((strength, idx) => (
+                    <Badge key={idx} variant="secondary">
+                      {strength}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-card rounded-xl p-4 border">
+                <h3 className="font-semibold mb-3">{t('profile.playingStyle')}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {profile.playing_style.map((style, idx) => (
+                    <Badge key={idx} variant="outline">
+                      {style}
+                    </Badge>
                   ))}
                 </div>
               </div>
             </TabsContent>
 
-            {/* Info Tab */}
             <TabsContent value="info" className="space-y-4">
-              <div className="bg-card rounded-2xl p-6 shadow-md space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Âge</span>
-                  <span className="font-semibold">{profile.age} ans</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Ville</span>
-                  <span className="font-semibold">{profile.city}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Position</span>
-                  <span className="font-semibold">{profile.primary_position}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Niveau</span>
-                  <span className="font-semibold">{profile.level}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Pied fort</span>
-                  <span className="font-semibold">{profile.dominant_side}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Expérience</span>
-                  <span className="font-semibold">{profile.experience_years} ans</span>
+              <div className="bg-card rounded-xl p-4 border">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">{t('profile.info.position')}</span>
+                    <span className="font-medium">{profile.primary_position}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">{t('profile.info.secondaryPositions')}</span>
+                    <span className="font-medium">{profile.secondary_positions.join(', ')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">{t('profile.info.nationality')}</span>
+                    <span className="font-medium">{profile.nationality}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">{t('profile.info.experience')}</span>
+                    <span className="font-medium">{profile.experience_years} {t('profile.info.years')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">{t('profile.info.level')}</span>
+                    <span className="font-medium">{profile.level}</span>
+                  </div>
                 </div>
               </div>
             </TabsContent>
 
-            {/* Videos Tab */}
-            <TabsContent value="videos" className="space-y-4">
-              <div className="text-center py-12">
-                <Video className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Pas de vidéos</h3>
-                <p className="text-muted-foreground mb-6">
-                  Ajoutez des vidéos de vos highlights
+            <TabsContent value="video" className="space-y-4">
+              <div className="bg-card rounded-xl p-8 border text-center">
+                <Video className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground mb-4">
+                  {t('profile.highlights.noVideo')}
                 </p>
-                <Button>Ajouter une vidéo</Button>
+                <Button variant="outline" size="sm">
+                  {t('profile.highlights.uploadVideo')}
+                </Button>
               </div>
             </TabsContent>
           </Tabs>
         </div>
-      </div>
 
-      <BottomNav />
+        <BottomNav />
+      </div>
     </div>
   );
 }
