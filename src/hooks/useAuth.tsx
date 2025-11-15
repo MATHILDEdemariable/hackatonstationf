@@ -3,9 +3,9 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
-// Mock user for demo mode
+// Mock user for demo mode (using fixed UUID for consistency)
 const MOCK_USER: User = {
-  id: 'demo-athlete-123',
+  id: '00000000-0000-0000-0000-000000000001',
   email: 'demo@athlete.com',
   app_metadata: {},
   user_metadata: { user_type: 'athlete' },
