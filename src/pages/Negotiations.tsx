@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, MoreVertical, PaperclipIcon, Phone } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, PaperclipIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
@@ -9,29 +9,6 @@ import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import OfferCard from "@/components/chat/OfferCard";
 import CounterOfferModal from "@/components/chat/CounterOfferModal";
-// Declare the custom element type
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'elevenlabs-convai': {
-        'agent-id': string;
-      };
-    }
-  }
-}
-import { supabase } from "@/integrations/supabase/client";
-import { ClubProfile } from "@/types/database.types";
-
-// Declare the custom element type for ElevenLabs
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'elevenlabs-convai': {
-        'agent-id': string;
-      };
-    }
-  }
-}
 
 interface Message {
   id: string;
@@ -50,6 +27,12 @@ interface Message {
     startDate: string;
   };
 }
+
+const mockClubs: Record<string, any> = {
+  '1': { name: 'FC Toulouse', logo: '🏟️', isOnline: true },
+  '2': { name: 'AS Lyon Nord', logo: '⚽', isOnline: false },
+  '3': { name: 'Bordeaux Sport Club', logo: '🎯', isOnline: true },
+};
 
 const mockMessages: Message[] = [
   {
@@ -92,58 +75,9 @@ export default function Negotiations() {
   const [messageInput, setMessageInput] = useState('');
   const [showCounterModal, setShowCounterModal] = useState(false);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
-  const [showVoiceCall, setShowVoiceCall] = useState(false);
-  const [club, setClub] = useState<ClubProfile | null>(null);
-  const [loading, setLoading] = useState(true);
 
+  const club = mockClubs[matchId || '1'];
   const locale = i18n.language === 'fr' ? fr : enUS;
-
-  useEffect(() => {
-    const loadClub = async () => {
-      if (!matchId) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('club_profiles')
-          .select('*')
-          .eq('id', matchId)
-          .maybeSingle();
-
-        if (error) throw error;
-        setClub(data as ClubProfile);
-      } catch (error) {
-        console.error('Error loading club:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadClub();
-  }, [matchId]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!club) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <p className="text-lg font-semibold mb-2">Club introuvable</p>
-          <Button onClick={() => navigate('/app/matches')}>
-            Retour aux matchs
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const sendMessage = () => {
     if (!messageInput.trim()) return;
@@ -234,43 +168,26 @@ export default function Negotiations() {
         
         <div className="flex items-center gap-3 flex-1">
           <div className="w-10 h-10 bg-gradient-sport rounded-xl flex items-center justify-center text-2xl">
-            {club.logo_url || '🏆'}
+            {club.logo}
           </div>
           <div>
-            <h2 className="font-bold">{club.club_name}</h2>
+            <h2 className="font-bold">{club.name}</h2>
             <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-success" />
+              <div className={cn(
+                "w-2 h-2 rounded-full",
+                club.isOnline ? "bg-success" : "bg-muted-foreground"
+              )} />
               <span className="text-xs text-muted-foreground">
-                {t('negotiations.online')}
+                {club.isOnline ? t('negotiations.online') : t('negotiations.offline')}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button 
-            variant={showVoiceCall ? "default" : "ghost"} 
-            size="icon"
-            onClick={() => setShowVoiceCall(!showVoiceCall)}
-            className={showVoiceCall ? "bg-green-500 hover:bg-green-600" : ""}
-          >
-            <Phone className="w-5 h-5" />
-          </Button>
-
-          <Button variant="ghost" size="icon">
-            <MoreVertical className="w-5 h-5" />
-          </Button>
-        </div>
+        <Button variant="ghost" size="icon">
+          <MoreVertical className="w-5 h-5" />
+        </Button>
       </div>
-
-      {/* Voice Call Widget */}
-      {showVoiceCall && (
-        <div className="h-96 border-b bg-card p-4">
-          <div className="w-full h-full flex items-center justify-center">
-            <elevenlabs-convai agent-id="agent_6501ka3skkdwegqa1w8kbea3wh79" />
-          </div>
-        </div>
-      )}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">

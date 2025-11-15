@@ -45,7 +45,7 @@ export default function Landing() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Link to="/auth">
+            <Link to="/athlete/onboarding">
               <Button 
                 size="lg" 
                 className="w-full sm:w-auto text-lg px-8 py-6 rounded-2xl hover-lift shadow-lg"
@@ -55,15 +55,16 @@ export default function Landing() {
               </Button>
             </Link>
             
-            <Link to="/auth">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="w-full sm:w-auto text-lg px-8 py-6 rounded-2xl hover-lift"
-              >
-                🏟️ {t('landing.hero.ctaClub')}
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="w-full sm:w-auto text-lg px-8 py-6 rounded-2xl hover-lift"
+              onClick={() => {
+                alert(t('landing.hero.clubComingSoon') || 'Bientôt disponible !');
+              }}
+            >
+              🏟️ {t('landing.hero.ctaClub')}
+            </Button>
           </div>
 
           {/* Quick Stats */}

@@ -1,7 +1,0 @@
-project_id = "otcqrsdddaobopcdpslq"
-
-[functions.match-with-clubs]
-verify_jwt = true
-
-[functions.generate-embeddings]
-verify_jwt = false

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PlayerProfile } from "@/types/matching.types";
+import { generatePlayerEmbedding } from "@/lib/embeddings";
 import { toast } from "sonner";
 
 import { Step1PersonalInfo } from "@/components/onboarding/Step1PersonalInfo";
@@ -22,11 +23,9 @@ const steps = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  // Créer un UUID valide pour la démo
-  const [demoUserId] = useState(() => crypto.randomUUID());
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedSport, setSelectedSport] = useState<string | null>(null); // Sera récupéré de la DB
   const [formData, setFormData] = useState<Partial<PlayerProfile['metadata']>>({
+    // Initialize with empty values
     stats: {
       goals: 0,
       assists: 0,
@@ -42,26 +41,36 @@ export default function Onboarding() {
   });
 
   const validateStep = (step: number, data: Partial<PlayerProfile['metadata']>): boolean => {
-    // Pour la démo, on rend toutes les étapes optionnelles
-    // On vérifie juste qu'au moins un champ principal est rempli
     switch (step) {
       case 1:
-        return true; // Au moins le nom serait bien, mais pas obligatoire pour la démo
+        return !!(data.name && data.age && data.nationality && data.city);
       case 2:
-        return true; // Position, etc. optionnels
+        return !!(data.position && data.strongFoot && data.level && data.experienceYears);
       case 3:
         return true; // Stats are optional
       case 4:
-        return true; // Préférences optionnelles
+        return !!(data.careerGoals?.desiredDivision && data.careerGoals?.salaryExpectation);
       case 5:
-        return true; // Strengths optionnels
+        return !!(data.strengths && data.strengths.length > 0);
       default:
-        return true;
+        return false;
     }
   };
 
   const handleNext = async () => {
-    // Pour la démo, plus besoin de validation stricte
+    const isValid = validateStep(currentStep, formData);
+    
+    if (!isValid) {
+      toast.error("Merci de remplir tous les champs requis");
+      return;
+    }
+
+    // Save progress to localStorage
+    localStorage.setItem('onboarding_progress', JSON.stringify({ 
+      step: currentStep, 
+      data: formData 
+    }));
+
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -70,55 +79,37 @@ export default function Onboarding() {
   };
 
   const createPlayerProfile = async () => {
-    console.log('Creating profile (DEMO MODE - localStorage only)...', { formData, demoUserId });
-    
     toast.loading("Création de ton profil...");
     
     try {
-      // Prepare athlete profile data for localStorage (no database)
-      const profileData = {
-        id: demoUserId,
-        sport: 'Football',
-        full_name: formData.name || 'Joueur Démo',
-        birth_date: formData.birthDate || '2000-01-01',
-        age: formData.age || 24,
-        nationality: formData.nationality || 'FR',
-        city: formData.city || 'Paris',
-        primary_position: formData.position || 'Milieu',
-        secondary_positions: formData.secondaryPositions || [],
-        dominant_side: formData.strongFoot || 'Droit',
-        level: formData.level || 'Amateur',
-        experience_years: formData.experienceYears || 5,
-        stats: formData.stats || { goals: 0, assists: 0, matches: 0, minutesPlayed: 0, yellowCards: 0, redCards: 0 },
-        strengths: formData.strengths || ['Vitesse', 'Technique'],
-        playing_style: formData.playingStyle || ['Offensif'],
-        personality_traits: formData.personality || ['Motivé'],
-        career_preferences: formData.careerGoals || { desiredDivision: 'Régional', salaryExpectation: 'Amateur' },
-        created_at: new Date().toISOString(),
+      // Generate embedding
+      const embedding = await generatePlayerEmbedding(formData);
+      
+      // Create complete profile
+      const profile: PlayerProfile = {
+        id: `player_${Date.now()}`,
+        metadata: {
+          ...formData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as PlayerProfile['metadata'],
+        vector: embedding
       };
 
-      console.log('Profile data:', profileData);
-      
-      // Store in localStorage for demo
-      localStorage.setItem('demoUserId', demoUserId);
-      localStorage.setItem('demoProfile', JSON.stringify(profileData));
-      console.log('Stored profile in localStorage');
-      
-      // Simulate a small delay for UX
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Save to localStorage (in production, send to backend)
+      localStorage.setItem('player_profile', JSON.stringify(profile));
+      localStorage.removeItem('onboarding_progress');
 
-      toast.dismiss();
-      toast.success("Profil créé avec succès ! 🎉");
+      toast.success("Profil créé avec succès !");
       
       // Navigate to discover page
       setTimeout(() => {
         navigate('/discover');
-      }, 500);
+      }, 1000);
       
     } catch (error) {
       console.error('Error creating profile:', error);
-      toast.dismiss();
-      toast.error(`Erreur lors de la création du profil: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error("Erreur lors de la création du profil");
     }
   };
 
