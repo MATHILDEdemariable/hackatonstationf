@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Send, MoreVertical, PaperclipIcon, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { fr, enUS } from "date-fns/locale";
 import OfferCard from "@/components/chat/OfferCard";
 import CounterOfferModal from "@/components/chat/CounterOfferModal";
 import { ElevenLabsWidget } from "@/components/ElevenLabsWidget";
+import { supabase } from "@/integrations/supabase/client";
+import { ClubProfile } from "@/types/database.types";
 
 interface Message {
   id: string;
@@ -28,12 +30,6 @@ interface Message {
     startDate: string;
   };
 }
-
-const mockClubs: Record<string, any> = {
-  '1': { name: 'FC Toulouse', logo: '🏟️', isOnline: true },
-  '2': { name: 'AS Lyon Nord', logo: '⚽', isOnline: false },
-  '3': { name: 'Bordeaux Sport Club', logo: '🎯', isOnline: true },
-};
 
 const mockMessages: Message[] = [
   {
@@ -77,9 +73,57 @@ export default function Negotiations() {
   const [showCounterModal, setShowCounterModal] = useState(false);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [showVoiceCall, setShowVoiceCall] = useState(false);
+  const [club, setClub] = useState<ClubProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const club = mockClubs[matchId || '1'];
   const locale = i18n.language === 'fr' ? fr : enUS;
+
+  useEffect(() => {
+    const loadClub = async () => {
+      if (!matchId) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('club_profiles')
+          .select('*')
+          .eq('id', matchId)
+          .maybeSingle();
+
+        if (error) throw error;
+        setClub(data as ClubProfile);
+      } catch (error) {
+        console.error('Error loading club:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadClub();
+  }, [matchId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!club) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <p className="text-lg font-semibold mb-2">Club introuvable</p>
+          <Button onClick={() => navigate('/app/matches')}>
+            Retour aux matchs
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const sendMessage = () => {
     if (!messageInput.trim()) return;
@@ -170,17 +214,14 @@ export default function Negotiations() {
         
         <div className="flex items-center gap-3 flex-1">
           <div className="w-10 h-10 bg-gradient-sport rounded-xl flex items-center justify-center text-2xl">
-            {club.logo}
+            {club.logo_url || '🏆'}
           </div>
           <div>
-            <h2 className="font-bold">{club.name}</h2>
+            <h2 className="font-bold">{club.club_name}</h2>
             <div className="flex items-center gap-1">
-              <div className={cn(
-                "w-2 h-2 rounded-full",
-                club.isOnline ? "bg-success" : "bg-muted-foreground"
-              )} />
+              <div className="w-2 h-2 rounded-full bg-success" />
               <span className="text-xs text-muted-foreground">
-                {club.isOnline ? t('negotiations.online') : t('negotiations.offline')}
+                {t('negotiations.online')}
               </span>
             </div>
           </div>
