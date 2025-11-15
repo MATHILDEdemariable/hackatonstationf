@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Heart, User } from "lucide-react";
+import { Home, Users, Heart, User, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
@@ -11,6 +11,7 @@ export default function BottomNav() {
     { path: "/app", icon: Home, label: t('nav.home') },
     { path: "/app/discover", icon: Users, label: t('nav.discover') },
     { path: "/app/matches", icon: Heart, label: t('nav.matches') },
+    { path: "/app/chat", icon: MessageCircle, label: t('nav.chat') },
     { path: "/app/profile", icon: User, label: t('nav.profile') },
   ];
 

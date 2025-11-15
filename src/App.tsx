@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Discover from "./pages/Discover";
 import Matches from "./pages/Matches";
+import Chat from "./pages/Chat";
 import Negotiations from "./pages/Negotiations";
 import Wellness from "./pages/Wellness";
 import Profile from "./pages/Profile";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/app" element={<Dashboard />} />
           <Route path="/app/discover" element={<Discover />} />
           <Route path="/app/matches" element={<Matches />} />
+          <Route path="/app/chat" element={<Chat />} />
           <Route path="/app/negotiations/:matchId" element={<Negotiations />} />
           <Route path="/app/wellness" element={<Wellness />} />
           <Route path="/app/profile" element={<Profile />} />

@@ -109,8 +109,15 @@
     "home": "Accueil",
     "discover": "Découvrir",
     "matches": "Matchs",
+    "chat": "Chat",
     "wellness": "Wellness",
     "profile": "Profil"
+  },
+  "chat": {
+    "title": "Assistant IA",
+    "subtitle": "En ligne • Propulsé par Mistral AI",
+    "inputPlaceholder": "Posez une question sur vos matchs...",
+    "disclaimer": "L'assistant peut faire des erreurs. Vérifiez les informations importantes."
   },
   "common": {
     "years": "ans",

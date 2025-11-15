@@ -1,4 +1,4 @@
-import { Search, MessageSquare } from "lucide-react";
+import { Search, MessageSquare, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -51,16 +51,40 @@ export default function Matches() {
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-lg mx-auto px-4 py-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">{t('matches.title')}</h1>
-            <p className="text-sm text-muted-foreground">
-              {mockMatches.length} conversation{mockMatches.length > 1 ? "s" : ""}
-            </p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold">{t('matches.title')}</h1>
+              <p className="text-sm text-muted-foreground">
+                {mockMatches.length} conversation{mockMatches.length > 1 ? "s" : ""}
+              </p>
+            </div>
+            <Badge className="bg-primary text-primary-foreground">
+              {mockMatches.filter(m => m.unreadCount > 0).length} {lang === 'fr' ? 'nouveaux' : 'new'}
+            </Badge>
           </div>
-          <Badge className="bg-primary text-primary-foreground">
-            {mockMatches.filter(m => m.unreadCount > 0).length} {lang === 'fr' ? 'nouveaux' : 'new'}
-          </Badge>
+          
+          {/* AI Assistant Banner */}
+          <Link to="/app/chat">
+            <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-2xl p-4 hover:border-purple-500/40 transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm">
+                    {lang === 'fr' ? '💬 Besoin de conseils ?' : '💬 Need advice?'}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {lang === 'fr' 
+                      ? 'Discutez avec l\'assistant IA de vos matchs et négociations'
+                      : 'Chat with the AI assistant about your matches and negotiations'}
+                  </p>
+                </div>
+                <MessageSquare className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Search */}

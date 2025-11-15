@@ -109,8 +109,15 @@
     "home": "Home",
     "discover": "Discover",
     "matches": "Matches",
+    "chat": "Chat",
     "wellness": "Wellness",
     "profile": "Profile"
+  },
+  "chat": {
+    "title": "AI Assistant",
+    "subtitle": "Online • Powered by Mistral AI",
+    "inputPlaceholder": "Ask a question about your matches...",
+    "disclaimer": "The assistant can make mistakes. Verify important information."
   },
   "common": {
     "years": "years old",
