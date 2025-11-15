@@ -11,6 +11,7 @@ import Negotiations from "./pages/Negotiations";
 import Wellness from "./pages/Wellness";
 import Profile from "./pages/Profile";
 import Onboarding from "./pages/Onboarding";
+import Assistant from "./pages/Assistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/app/matches" element={<Matches />} />
           <Route path="/app/negotiations/:matchId" element={<Negotiations />} />
           <Route path="/app/wellness" element={<Wellness />} />
+          <Route path="/app/assistant" element={<Assistant />} />
           <Route path="/app/profile" element={<Profile />} />
           
           {/* Legacy routes - redirect to /app */}
