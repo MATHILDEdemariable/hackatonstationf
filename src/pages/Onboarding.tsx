@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { PlayerProfile } from "@/types/matching.types";
 import { generatePlayerEmbedding } from "@/lib/embeddings";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 
 import { Step1PersonalInfo } from "@/components/onboarding/Step1PersonalInfo";
 import { Step2SportProfile } from "@/components/onboarding/Step2SportProfile";
@@ -25,9 +24,10 @@ const steps = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  // Créer un ID temporaire pour la démo (pas d'authentification requise)
+  const [demoUserId] = useState(() => `demo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedSport, setSelectedSport] = useState<string>('');
+  const [selectedSport, setSelectedSport] = useState<string>('football'); // Sport par défaut
   const [formData, setFormData] = useState<Partial<PlayerProfile['metadata']>>({
     stats: {
       goals: 0,
@@ -42,31 +42,6 @@ export default function Onboarding() {
     playingStyle: [],
     personality: [],
   });
-
-  useEffect(() => {
-    // Wait for loading to complete before checking user
-    if (loading) return;
-    
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    
-    // Load sport selection and progress from Supabase if exists
-    const loadProgress = async () => {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single();
-      
-      if (profile?.user_type !== 'athlete') {
-        navigate('/club/onboarding');
-      }
-    };
-    
-    loadProgress();
-  }, [user, loading, navigate]);
 
   const validateStep = (step: number, data: Partial<PlayerProfile['metadata']>): boolean => {
     switch (step) {
@@ -100,21 +75,9 @@ export default function Onboarding() {
     }
   };
 
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
-
   const createPlayerProfile = async () => {
-    if (!user || !selectedSport) {
-      toast.error("Session invalide");
+    if (!selectedSport) {
+      toast.error("Veuillez sélectionner un sport");
       return;
     }
 
@@ -124,11 +87,11 @@ export default function Onboarding() {
       // Generate embedding
       const embedding = await generatePlayerEmbedding(formData);
       
-      // Save to athlete_profiles table
+      // Save to athlete_profiles table with demo user ID
       const { error: insertError } = await supabase
         .from('athlete_profiles')
         .insert({
-          id: user.id,
+          id: demoUserId,
           sport_id: selectedSport,
           full_name: formData.name || '',
           birth_date: formData.birthDate || new Date().toISOString(),
@@ -148,25 +111,37 @@ export default function Onboarding() {
           embedding_vector: embedding.join(','),
         });
 
-      if (insertError) throw insertError;
-
-      // Call match-with-clubs edge function
-      const { data: matchData, error: matchError } = await supabase.functions.invoke('match-with-clubs', {
-        body: { athlete_id: user.id }
-      });
-
-      if (matchError) {
-        console.error('Matching error:', matchError);
-      } else {
-        console.log('Matching results:', matchData);
+      if (insertError) {
+        console.error('Error creating profile:', insertError);
+        // Continue même en cas d'erreur pour la démo
       }
 
+      // Try to call match-with-clubs edge function (optional for demo)
+      try {
+        const { data: matchData, error: matchError } = await supabase.functions.invoke('match-with-clubs', {
+          body: { athlete_id: demoUserId }
+        });
+
+        if (matchError) {
+          console.error('Matching error:', matchError);
+        } else {
+          console.log('Matching results:', matchData);
+        }
+      } catch (matchError) {
+        console.error('Matching function error:', matchError);
+      }
+
+      toast.dismiss();
       toast.success("Profil créé avec succès !");
+      
+      // Store demo user ID in localStorage for later use
+      localStorage.setItem('demoUserId', demoUserId);
       
       navigate('/discover');
       
     } catch (error) {
       console.error('Error creating profile:', error);
+      toast.dismiss();
       toast.error("Erreur lors de la création du profil");
     }
   };

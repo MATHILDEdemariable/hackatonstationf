@@ -6,27 +6,26 @@ import BottomNav from "@/components/BottomNav";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
+  // Récupérer l'ID utilisateur de démo depuis localStorage
+  const demoUserId = localStorage.getItem('demoUserId');
 
+  useEffect(() => {
     const loadProfile = async () => {
+      if (!demoUserId) {
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('athlete_profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', demoUserId)
         .maybeSingle();
 
       if (error) {
@@ -35,18 +34,12 @@ export default function Profile() {
         return;
       }
 
-      if (!data) {
-        // No profile found, redirect to onboarding
-        navigate('/app/onboarding');
-        return;
-      }
-
       setProfile(data);
       setLoading(false);
     };
 
     loadProfile();
-  }, [user, navigate]);
+  }, [demoUserId]);
 
   if (loading) {
     return (

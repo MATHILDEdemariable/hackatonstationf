@@ -5,11 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNav from "@/components/BottomNav";
+import SuggestedClubs from "@/components/SuggestedClubs";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 interface Match {
   id: string;
@@ -25,22 +24,41 @@ interface Match {
   unreadCount: number;
 }
 
+interface SuggestedClub {
+  id: string;
+  score: number;
+  club_name: string;
+  city: string;
+  country: string;
+  division: string;
+  description: string;
+  playing_style: string;
+  team_culture: string;
+  facilities: string;
+  recruitment_needs: string;
+  budget: string;
+  logo_url?: string;
+}
+
 export default function Matches() {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const lang = i18n.language as 'fr' | 'en';
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestedClubs, setSuggestedClubs] = useState<SuggestedClub[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
+  // Récupérer l'ID utilisateur de démo depuis localStorage
+  const demoUserId = localStorage.getItem('demoUserId');
 
   useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
     const loadMatches = async () => {
+      if (!demoUserId) {
+        setLoading(false);
+        return;
+      }
+
       try {
         // Fetch matches with club details
         const { data: matchesData, error: matchesError } = await supabase
@@ -55,7 +73,7 @@ export default function Matches() {
               logo_url
             )
           `)
-          .eq('athlete_id', user.id)
+          .eq('athlete_id', demoUserId)
           .order('created_at', { ascending: false });
 
         if (matchesError) throw matchesError;
@@ -77,7 +95,7 @@ export default function Matches() {
               .from('messages')
               .select('*', { count: 'exact', head: true })
               .eq('match_id', match.id)
-              .neq('sender_id', user.id);
+              .neq('sender_id', demoUserId);
 
             const clubProfile = match.club_profiles as any;
 
@@ -106,7 +124,36 @@ export default function Matches() {
     };
 
     loadMatches();
-  }, [user, navigate, lang]);
+    loadSuggestions();
+  }, [demoUserId, lang]);
+
+  const loadSuggestions = async () => {
+    if (!demoUserId) return;
+    
+    setLoadingSuggestions(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('search-clubs-qdrant', {
+        body: { 
+          athlete_id: demoUserId,
+          limit: 5
+        }
+      });
+
+      if (error) {
+        console.error('Error loading club suggestions:', error);
+        return;
+      }
+
+      if (data?.success && data.clubs) {
+        setSuggestedClubs(data.clubs);
+        console.log('Loaded club suggestions:', data.clubs.length);
+      }
+    } catch (error) {
+      console.error('Error calling Qdrant function:', error);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
 
   const filteredMatches = matches.filter(match => 
     match.club_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -149,6 +196,20 @@ export default function Matches() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
+        {/* Suggested Clubs from Qdrant */}
+        {suggestedClubs.length > 0 && (
+          <div className="mb-6">
+            <SuggestedClubs 
+              clubs={suggestedClubs}
+              maxDisplay={3}
+              onViewMore={() => {
+                // TODO: Navigate to a full page of suggestions or expand inline
+                console.log('Show more suggestions');
+              }}
+            />
+          </div>
+        )}
 
         {/* Tabs */}
         <Tabs defaultValue="all" className="mb-6">
