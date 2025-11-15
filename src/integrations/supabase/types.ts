@@ -14,7 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      athlete_profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          bio: string | null
+          birth_date: string
+          career_preferences: Json
+          city: string
+          created_at: string | null
+          dominant_side: string | null
+          embedding_vector: string | null
+          experience_years: number
+          full_name: string
+          highlight_video_url: string | null
+          id: string
+          level: string
+          nationality: string
+          personality_traits: string[]
+          playing_style: string[]
+          primary_position: string
+          secondary_positions: string[] | null
+          sport_id: string
+          stats: Json | null
+          strengths: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          age?: number | null
+          avatar_url?: string | null
+          bio?: string | null
+          birth_date: string
+          career_preferences?: Json
+          city: string
+          created_at?: string | null
+          dominant_side?: string | null
+          embedding_vector?: string | null
+          experience_years: number
+          full_name: string
+          highlight_video_url?: string | null
+          id: string
+          level: string
+          nationality: string
+          personality_traits?: string[]
+          playing_style?: string[]
+          primary_position: string
+          secondary_positions?: string[] | null
+          sport_id: string
+          stats?: Json | null
+          strengths?: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          age?: number | null
+          avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string
+          career_preferences?: Json
+          city?: string
+          created_at?: string | null
+          dominant_side?: string | null
+          embedding_vector?: string | null
+          experience_years?: number
+          full_name?: string
+          highlight_video_url?: string | null
+          id?: string
+          level?: string
+          nationality?: string
+          personality_traits?: string[]
+          playing_style?: string[]
+          primary_position?: string
+          secondary_positions?: string[] | null
+          sport_id?: string
+          stats?: Json | null
+          strengths?: string[]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "athlete_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_profiles_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      club_profiles: {
+        Row: {
+          active_recruitment: boolean | null
+          budget: Json
+          city: string
+          club_name: string
+          club_stats: Json | null
+          country: string
+          created_at: string | null
+          description: string | null
+          division: string
+          division_level: number
+          embedding_vector: string | null
+          facilities: string[]
+          id: string
+          location: Json | null
+          logo_url: string | null
+          playing_style: string[]
+          recruitment_needs: Json
+          sport_id: string
+          team_culture: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          active_recruitment?: boolean | null
+          budget?: Json
+          city: string
+          club_name: string
+          club_stats?: Json | null
+          country: string
+          created_at?: string | null
+          description?: string | null
+          division: string
+          division_level: number
+          embedding_vector?: string | null
+          facilities?: string[]
+          id: string
+          location?: Json | null
+          logo_url?: string | null
+          playing_style?: string[]
+          recruitment_needs?: Json
+          sport_id: string
+          team_culture?: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          active_recruitment?: boolean | null
+          budget?: Json
+          city?: string
+          club_name?: string
+          club_stats?: Json | null
+          country?: string
+          created_at?: string | null
+          description?: string | null
+          division?: string
+          division_level?: number
+          embedding_vector?: string | null
+          facilities?: string[]
+          id?: string
+          location?: Json | null
+          logo_url?: string | null
+          playing_style?: string[]
+          recruitment_needs?: Json
+          sport_id?: string
+          team_culture?: string[]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "club_profiles_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          updated_at: string | null
+          user_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id: string
+          updated_at?: string | null
+          user_type: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          updated_at?: string | null
+          user_type?: string
+        }
+        Relationships: []
+      }
+      sport_positions: {
+        Row: {
+          id: string
+          position_key: string
+          position_label_en: string
+          position_label_fr: string
+          sport_id: string | null
+        }
+        Insert: {
+          id?: string
+          position_key: string
+          position_label_en: string
+          position_label_fr: string
+          sport_id?: string | null
+        }
+        Update: {
+          id?: string
+          position_key?: string
+          position_label_en?: string
+          position_label_fr?: string
+          sport_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sport_positions_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sports: {
+        Row: {
+          category: string
+          created_at: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
