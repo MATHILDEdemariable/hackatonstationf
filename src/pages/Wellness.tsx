@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { ElevenLabsWidget } from "@/components/ElevenLabsWidget";
 
 export default function Wellness() {
   const [isRecording, setIsRecording] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
+  const [isConversationActive, setIsConversationActive] = useState(false);
   const { t, i18n } = useTranslation();
   
   const lang = i18n.language as 'fr' | 'en';
@@ -75,7 +77,10 @@ export default function Wellness() {
                   {moodOptions.map((mood) => (
                     <button
                       key={mood.value}
-                      onClick={() => setSessionActive(true)}
+                      onClick={() => {
+                        setSessionActive(true);
+                        setIsConversationActive(true);
+                      }}
                       className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-wellness/10 transition-all hover-lift"
                     >
                       <span className="text-4xl">{mood.emoji}</span>
@@ -100,7 +105,10 @@ export default function Wellness() {
                   {quickActions.map((action) => (
                     <button
                       key={action.label}
-                      onClick={() => setSessionActive(true)}
+                      onClick={() => {
+                        setSessionActive(true);
+                        setIsConversationActive(true);
+                      }}
                       className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-wellness/5 to-wellness/10 hover:from-wellness/10 hover:to-wellness/20 transition-all hover-lift"
                     >
                       <span className="text-3xl">{action.icon}</span>
@@ -163,62 +171,27 @@ export default function Wellness() {
                 </div>
               </div>
 
-              {/* Voice Input Area */}
-              <div className="bg-white/95 rounded-3xl p-6 text-center">
-                <div className="mb-6">
-                  {/* Waveform Visualization (Mock) */}
-                  {isRecording && (
-                    <div className="flex items-center justify-center gap-1 h-20 mb-4">
-                      {[...Array(20)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-1 bg-wellness rounded-full animate-pulse"
-                          style={{
-                            height: `${Math.random() * 60 + 20}px`,
-                            animationDelay: `${i * 0.05}s`,
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Voice Button */}
-                  <button
-                    onMouseDown={startRecording}
-                    onMouseUp={stopRecording}
-                    onTouchStart={startRecording}
-                    onTouchEnd={stopRecording}
-                    className={cn(
-                      "w-20 h-20 rounded-full mx-auto flex items-center justify-center transition-all shadow-lg",
-                      isRecording
-                        ? "bg-destructive scale-110 animate-pulse"
-                        : "bg-wellness hover:scale-105"
-                    )}
-                  >
-                    <Mic className={cn(
-                      "w-8 h-8 text-white",
-                      isRecording && "animate-pulse"
-                    )} />
-                  </button>
-
-                  <p className="text-sm text-muted-foreground mt-4">
-                    {isRecording ? t('wellness.releaseToSend') : t('wellness.holdToTalk')}
-                  </p>
-                </div>
-
-                <div className="relative py-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-xs">
-                    <span className="bg-white px-2 text-muted-foreground">{t('wellness.orType')}</span>
-                  </div>
+              {/* ElevenLabs Widget Area */}
+              <div className="bg-white/95 rounded-3xl p-6">
+                <div className="flex flex-col items-center gap-4 min-h-[300px] justify-center">
+                  <ElevenLabsWidget
+                    agentId="agent_7901ka3n4540fbvsfav10f0e59yk"
+                    isActive={isConversationActive}
+                    onConversationStart={() => console.log("Conversation started")}
+                    onConversationEnd={() => {
+                      console.log("Conversation ended");
+                      setIsConversationActive(false);
+                    }}
+                  />
                 </div>
 
                 <Button
                   variant="outline"
-                  onClick={() => setSessionActive(false)}
-                  className="w-full"
+                  onClick={() => {
+                    setSessionActive(false);
+                    setIsConversationActive(false);
+                  }}
+                  className="w-full mt-4"
                 >
                   {t('wellness.endSession')}
                 </Button>
