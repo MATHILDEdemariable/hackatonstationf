@@ -60,6 +60,18 @@ export default function Profile() {
 
         {/* Profile Info */}
         <div className="px-6 pt-20 pb-6">
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.location.href = '/athlete/onboarding'}
+              className="gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              {lang === 'fr' ? 'Mettre à jour mon profil' : 'Update my profile'}
+            </Button>
+          </div>
+          
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold mb-1">
