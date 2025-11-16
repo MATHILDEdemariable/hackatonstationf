@@ -45,7 +45,7 @@ export default function Landing() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Link to="/athlete/onboarding">
+            <Link to="/app">
               <Button 
                 size="lg" 
                 className="w-full sm:w-auto text-lg px-8 py-6 rounded-2xl hover-lift shadow-lg"
